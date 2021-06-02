@@ -5,12 +5,11 @@
 
 #include "token.hpp"
 
-
 class Node
 {
 public:
 	// pure virtual function
-	virtual ~Node() {};
+	virtual ~Node(){};
 	virtual std::string tokenLiteral() = 0;
 	virtual std::string getStringRepr() = 0;
 	virtual std::string nodeType() = 0;
@@ -67,4 +66,16 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "Let Statement"; }
+};
+
+class ReturnStatement : public Statement
+{
+public:
+	Token token; // token RETURN
+	Expression *returnValue;
+
+	void statementNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "Return Statement"; }
 };

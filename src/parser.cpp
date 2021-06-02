@@ -34,9 +34,13 @@ Program *Parser::ParseProgram()
 
 Statement *Parser::parseStatement()
 {
+	TokenType curTokenType = curToken.type;
+	
 	// switch takes only int or enum val, so used if
-	if (curToken.type == LET)
+	if (curTokenType == LET)
 		return parseLetStatement();
+	else if (curTokenType == RETURN)
+		return parseReturnStatement();
 
 	return nullptr;
 }
@@ -92,4 +96,16 @@ void Parser::peekError(const TokenType &tokenType)
 	std::string msg = "expected token to be " + tokenType + ", got " + peekToken.type + " instead";
 
 	errors.push_back(msg);
+}
+
+ReturnStatement* Parser::parseReturnStatement() {
+  ReturnStatement* stmt = new ReturnStatement();
+  stmt->token = curToken;
+
+  nextToken();
+
+  while (peekToken.type != SEMICOLON)
+    nextToken();
+
+  return stmt;
 }

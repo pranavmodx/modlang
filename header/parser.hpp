@@ -16,6 +16,7 @@ private:
 
 	Statement* parseStatement();
 	LetStatement* parseLetStatement();
+	ReturnStatement* parseReturnStatement();
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);

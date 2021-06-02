@@ -28,3 +28,11 @@ std::string LetStatement::getStringRepr()
 
 	return res;
 }
+
+std::string ReturnStatement::getStringRepr() {
+  std::string res = tokenLiteral() + " ";
+
+  res.push_back(';');
+
+  return res;
+}
