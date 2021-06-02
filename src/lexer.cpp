@@ -5,232 +5,238 @@
 
 // Utility functions
 
-bool is_letter(char cur_char)
+bool isLetter(char curChar)
 {
-	return isalpha(cur_char) || cur_char == '_';
+	return isalpha(curChar) || curChar == '_';
 }
 
-bool is_digit(char cur_char)
+bool isDigit(char curChar)
 {
-	return isdigit(cur_char);
+	// check
+	return isdigit(curChar);
 }
 
-// Public functions
 
 void Lexer::New(std::string &input)
 {
 	this->input = input;
-	read_pos = 0;
-	read_char();
+	readPos = 0;
+	readChar();
 }
 
-Token Lexer::next_token()
+void Lexer::readChar()
 {
-	Token token;
-
-	skip_whitespace();
-
-	switch (cur_char)
-	{
-	case '=':
-		if (peek_char() == '=')
-		{
-			token = Token(EQ, "==");
-			read_char();
-		}
-		else
-			token = Token(ASSIGN, cur_char);
-
-		read_char();
-		break;
-
-	case '!':
-		if (peek_char() == '=')
-		{
-			token = Token(NEQ, "!=");
-			read_char();
-		}
-		else
-			token = Token(BANG, cur_char);
-
-		read_char();
-		break;
-
-	case '<':
-		if (peek_char() == '=')
-		{
-			token = Token(LTE, "<=");
-			read_char();
-		}
-		else
-			token = Token(LT, cur_char);
-
-		read_char();
-		break;
-
-	case '>':
-		if (peek_char() == '=')
-		{
-			token = Token(GTE, ">=");
-			read_char();
-		}
-		else
-			token = Token(GT, cur_char);
-
-		read_char();
-		break;
-
-	case '+':
-		token = Token(PLUS, cur_char);
-		read_char();
-		break;
-
-	case '-':
-		token = Token(MINUS, cur_char);
-		read_char();
-		break;
-
-	case '*':
-		token = Token(ASTERISK, cur_char);
-		read_char();
-		break;
-
-	case '/':
-		token = Token(SLASH, cur_char);
-		read_char();
-		break;
-
-	case '%':
-		token = Token(MODULO, cur_char);
-		read_char();
-		break;
-
-	case ',':
-		token = Token(COMMA, cur_char);
-		read_char();
-		break;
-
-	case ';':
-		token = Token(SEMICOLON, cur_char);
-		read_char();
-		break;
-
-	case '(':
-		token = Token(LPAREN, cur_char);
-		read_char();
-		break;
-
-	case ')':
-		token = Token(RPAREN, cur_char);
-		read_char();
-		break;
-
-	case '{':
-		token = Token(LBRACE, cur_char);
-		read_char();
-		break;
-
-	case '}':
-		token = Token(RBRACE, cur_char);
-		read_char();
-		break;
-
-	case '[':
-		token = Token(LBRACKET, cur_char);
-		read_char();
-		break;
-
-	case ']':
-		token = Token(RBRACKET, cur_char);
-		read_char();
-		break;
-
-	case '"':
-		token = Token(STRING, read_string());
-		read_char();
-		break;
-
-	case 0:
-		token = Token(END, "");
-		read_char();
-		break;
-
-	default:
-		if (is_letter(cur_char))
-		{
-			token.literal = read_identifier();
-			token.type = LookupIdentifier(token.literal);
-		}
-		else if (is_digit(cur_char))
-		{
-			token.type = INT;
-			token.literal = read_number();
-		}
-		else
-		{
-			token = Token(ILLEGAL, cur_char);
-			read_char();
-		}
-		break;
-	}
-	return token;
-}
-
-// Private functions
-
-void Lexer::read_char()
-{
-	if (read_pos >= input.size())
-		cur_char = 0;
+	if (readPos >= input.size())
+		curChar = 0; // 0 -> end of file
 	else
-		cur_char = input[read_pos];
+		curChar = input[readPos];
 
-	pos = read_pos;
-	read_pos++;
+	pos = readPos;
+	readPos++;
 }
 
-char Lexer::peek_char()
+char Lexer::peekChar()
 {
-	if (read_pos >= input.size())
+	if (readPos >= input.size())
 		return 0;
 	else
-		return input[read_pos];
+		return input[readPos];
 }
 
-std::string Lexer::read_identifier()
+std::string Lexer::readIdentifier()
 {
 	int start = pos;
 
-	while (is_letter(cur_char))
-		read_char();
+	while (isLetter(curChar))
+		readChar();
 
 	return input.substr(start, pos - start);
 }
 
-std::string Lexer::read_number()
+std::string Lexer::readNumber()
 {
 	int start = pos;
 
-	while (is_digit(cur_char))
-		read_char();
+	while (isDigit(curChar))
+		readChar();
 
-	return input.substr(start, pos - start);
+	return input.substr(start, pos - start); // check
 }
 
-std::string Lexer::read_string()
+std::string Lexer::readString()
 {
 	int start = pos + 1;
 
 	do
 	{
-		read_char();
-	} while (cur_char != '"' && cur_char != 0);
+		readChar();
+	} while (curChar != '"' && curChar != 0);
 
 	return input.substr(start, pos - start);
 }
 
-void Lexer::skip_whitespace()
+void Lexer::skipWhitespace()
 {
-	while (cur_char == ' ' || cur_char == '\t' || cur_char == '\r' || cur_char == '\n')
-		read_char();
+	while (curChar == ' ' || curChar == '\t' || curChar == '\r' || curChar == '\n')
+		readChar();
+}
+
+Token Lexer::nextToken()
+{
+	Token token;
+
+	skipWhitespace();
+
+	switch (curChar)
+	{
+	case '=':
+		if (peekChar() == '=')
+		{
+			token = Token(EQ, "==");
+			readChar();
+		}
+		else
+			token = Token(ASSIGN, curChar);
+
+		readChar();
+		break;
+
+	case '!':
+		if (peekChar() == '=')
+		{
+			token = Token(NEQ, "!=");
+			readChar();
+		}
+		else
+			token = Token(BANG, curChar);
+
+		readChar();
+		break;
+
+	case '<':
+		if (peekChar() == '=')
+		{
+			token = Token(LTE, "<=");
+			readChar();
+		}
+		else
+			token = Token(LT, curChar);
+
+		readChar();
+		break;
+
+	case '>':
+		if (peekChar() == '=')
+		{
+			token = Token(GTE, ">=");
+			readChar();
+		}
+		else
+			token = Token(GT, curChar);
+
+		readChar();
+		break;
+
+	case '+':
+		token = Token(PLUS, curChar);
+		readChar();
+		break;
+
+	case '-':
+		token = Token(MINUS, curChar);
+		readChar();
+		break;
+
+	case '*':
+		token = Token(ASTERISK, curChar);
+		readChar();
+		break;
+
+	case '/':
+		token = Token(SLASH, curChar);
+		readChar();
+		break;
+
+	case '%':
+		token = Token(MODULO, curChar);
+		readChar();
+		break;
+
+	case ',':
+		token = Token(COMMA, curChar);
+		readChar();
+		break;
+
+	case ';':
+		token = Token(SEMICOLON, curChar);
+		readChar();
+		break;
+
+	case ':':
+		token = Token(COLON, curChar);
+		readChar();
+		break;
+
+	case '(':
+		token = Token(LPAREN, curChar);
+		readChar();
+		break;
+
+	case ')':
+		token = Token(RPAREN, curChar);
+		readChar();
+		break;
+
+	case '{':
+		token = Token(LBRACE, curChar);
+		readChar();
+		break;
+
+	case '}':
+		token = Token(RBRACE, curChar);
+		readChar();
+		break;
+
+	case '[':
+		token = Token(LBRACKET, curChar);
+		readChar();
+		break;
+
+	case ']':
+		token = Token(RBRACKET, curChar);
+		readChar();
+		break;
+
+	case '"':
+		token = Token(STRING, readString());
+		readChar();
+		break;
+
+	case 0:
+		token = Token(END, "");
+		readChar();
+		break;
+
+	default:
+		if (isLetter(curChar))
+		{
+			token.literal = readIdentifier();
+			token.type = LookupIdentifier(token.literal);
+			return token;
+		}
+		else if (isDigit(curChar))
+		{
+			token.type = INT;
+			token.literal = readNumber();
+			return token;
+		}
+		else
+		{
+			token = Token(ILLEGAL, curChar);
+			readChar();
+		}
+		break;
+	}
+
+	return token;
 }

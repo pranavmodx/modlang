@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+
 typedef std::string TokenType;
 
 class Token
@@ -13,6 +14,7 @@ public:
 
 	Token() {}
 	Token(TokenType type, std::string literal) : type(type), literal(literal) {}
+	// check
   	Token(TokenType type, char ch) : type(type), literal(std::string(1, ch)) {}
 };
 
@@ -20,9 +22,10 @@ const TokenType ILLEGAL = "ILLEGAL"; // unknown token
 const TokenType END = "END"; // end of file
 
 const TokenType IDENT = "IDENT"; // identifiers
-const TokenType INT = "INT";
-const TokenType STRING = "STRING";
+const TokenType INT = "INT"; // int data type
+const TokenType STRING = "STRING"; // string data type
 
+// operators
 const TokenType ASSIGN = "=";
 const TokenType PLUS = "+";
 const TokenType MINUS = "-";
@@ -31,6 +34,7 @@ const TokenType ASTERISK = "*";
 const TokenType SLASH = "/";
 const TokenType MODULO = "%";
 
+// comparison
 const TokenType LT = "<";
 const TokenType GT = ">";
 const TokenType LTE = "<=";
@@ -39,9 +43,12 @@ const TokenType GTE = ">=";
 const TokenType EQ = "==";
 const TokenType NEQ = "!=";
 
+// punctuations
 const TokenType COMMA = ",";
 const TokenType SEMICOLON = ";";
+const TokenType COLON = ":";
 
+// brackets
 const TokenType LPAREN = "(";
 const TokenType RPAREN = ")";
 const TokenType LBRACE = "{";

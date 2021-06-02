@@ -32,4 +32,9 @@
 *.app
 
 *.dSYM
-vscode
+.vscode
+rlpl
+rppl
+repl
+lexer_test
+parser_test

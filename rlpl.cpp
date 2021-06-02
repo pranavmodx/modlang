@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 
+
 // Read "Lex" Print Loop
 void rlpl()
 {
@@ -19,12 +20,12 @@ void rlpl()
 		std::getline(std::cin, line);
 
 		lexer.New(line);
-		token = lexer.next_token();
+		token = lexer.nextToken();
 
 		while (token.type != END)
 		{
 			std::cout << "Type: " << token.type << ", Literal: " << token.literal << std::endl;
-			token = lexer.next_token();
+			token = lexer.nextToken();
 		}
 
 		line.clear();
