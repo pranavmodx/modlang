@@ -36,3 +36,16 @@ std::string ReturnStatement::getStringRepr() {
 
   return res;
 }
+
+std::string ExpressionStatement::getStringRepr() {
+  std::string res = "";
+
+  if(expression != nullptr) {
+    res += expression->getStringRepr();
+  }
+
+  res.push_back(';');
+
+  return res;
+}
+

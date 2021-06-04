@@ -9,7 +9,6 @@ class Node
 {
 public:
 	// pure virtual function
-	virtual ~Node(){};
 	virtual std::string tokenLiteral() = 0;
 	virtual std::string getStringRepr() = 0;
 	virtual std::string nodeType() = 0;
@@ -49,6 +48,13 @@ public:
 	Token token;
 	std::string value;
 
+	Identifier() {} // if parameterized constructor (below) is specified then this must be specified too
+	Identifier(Token token, std::string value)
+	{
+		this->token = token;
+		this->value = value;
+	}
+
 	void expressionNode() {}
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr() { return value; }
@@ -65,7 +71,7 @@ public:
 	void statementNode() {}
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
-	std::string nodeType() { return "Let Statement"; }
+	std::string nodeType() { return "LetStatement"; }
 };
 
 class ReturnStatement : public Statement
@@ -77,5 +83,29 @@ public:
 	void statementNode() {}
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
-	std::string nodeType() { return "Return Statement"; }
+	std::string nodeType() { return "ReturnStatement"; }
+};
+
+class ExpressionStatement : public Statement
+{
+public:
+	Token token;
+	Expression *expression;
+
+	void statementNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "ExpressionStatement"; }
+};
+
+class IntegerLiteral : public Expression
+{
+public:
+	Token token;
+	int value;
+
+	void expressionNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr() { return std::to_string(value); }
+	std::string nodeType() { return "IntegerLiteral"; }
 };

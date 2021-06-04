@@ -1,5 +1,22 @@
 #include "../header/parser.hpp"
 
+#include <stdexcept>
+
+std::unordered_map<TokenType, Precedence> precedences({
+	{EQ, EQUALS},
+	{NEQ, EQUALS},
+	{LT, LESSGREATER},
+	{GT, LESSGREATER},
+	{LTE, LESSGREATER},
+	{GTE, LESSGREATER},
+	{PLUS, SUM},
+	{MINUS, SUM},
+	{SLASH, PRODUCT},
+	{ASTERISK, PRODUCT},
+	{MODULO, PRODUCT},
+	{LPAREN, CALL},
+	{LBRACKET, INDEX},
+});
 
 void Parser::New(Lexer &lexer)
 {
@@ -7,6 +24,16 @@ void Parser::New(Lexer &lexer)
 
 	nextToken();
 	nextToken();
+
+	prefixParseFns[IDENT] = &Parser::parseIdentifier; // address of method
+	prefixParseFns[INT] = &Parser::parseIntegerLiteral;
+}
+
+Expression *Parser::parseIdentifier()
+{
+	Identifier *ident = new Identifier(curToken, curToken.literal);
+
+	return ident;
 }
 
 void Parser::nextToken()
@@ -35,12 +62,14 @@ Program *Parser::ParseProgram()
 Statement *Parser::parseStatement()
 {
 	TokenType curTokenType = curToken.type;
-	
+
 	// switch takes only int or enum val, so used if
 	if (curTokenType == LET)
 		return parseLetStatement();
 	else if (curTokenType == RETURN)
 		return parseReturnStatement();
+	else
+		return parseExpressionStatement();
 
 	return nullptr;
 }
@@ -87,7 +116,8 @@ std::vector<std::string> Parser::Errors()
 	return errors;
 }
 
-void Parser::resetErrors() {
+void Parser::resetErrors()
+{
 	errors.clear();
 }
 
@@ -98,14 +128,62 @@ void Parser::peekError(const TokenType &tokenType)
 	errors.push_back(msg);
 }
 
-ReturnStatement* Parser::parseReturnStatement() {
-  ReturnStatement* stmt = new ReturnStatement();
-  stmt->token = curToken;
+ReturnStatement *Parser::parseReturnStatement()
+{
+	ReturnStatement *stmt = new ReturnStatement();
+	stmt->token = curToken;
 
-  nextToken();
+	nextToken();
 
-  while (peekToken.type != SEMICOLON)
-    nextToken();
+	while (curToken.type != SEMICOLON)
+		nextToken();
 
-  return stmt;
+	return stmt;
+}
+
+ExpressionStatement *Parser::parseExpressionStatement()
+{
+	ExpressionStatement *stmt = new ExpressionStatement();
+	stmt->token = curToken;
+	stmt->expression = parseExpression(LOWEST);
+
+	if (peekToken.type == SEMICOLON)
+		nextToken();
+
+	return stmt;
+}
+
+Expression *Parser::parseExpression(Precedence precedence)
+{
+	if (prefixParseFns.find(curToken.type) == prefixParseFns.end())
+		return nullptr;
+
+	PrefixParseFn prefix = prefixParseFns[curToken.type];
+
+	Expression *leftExp = (this->*prefix)(); // ->* operator is used to invoke method pointer
+
+	return leftExp;
+}
+
+Expression *Parser::parseIntegerLiteral()
+{
+	IntegerLiteral *intLit = new IntegerLiteral();
+	intLit->token = curToken;
+
+	try
+	{
+		intLit->value = std::stoi(curToken.literal);
+	}
+	catch (const std::invalid_argument e)
+	{
+		errors.push_back("cannot parse " + curToken.literal + " to int");
+		return nullptr;
+	}
+	catch (const std::out_of_range e)
+	{
+		errors.push_back("the integer " + curToken.literal + " is out of range");
+		return nullptr;
+	}
+
+	return intLit;
 }
