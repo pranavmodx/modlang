@@ -2,21 +2,26 @@
 
 #include <stdexcept>
 
-std::unordered_map<TokenType, Precedence> precedences({
-	{EQ, EQUALS},
-	{NEQ, EQUALS},
-	{LT, LESSGREATER},
-	{GT, LESSGREATER},
-	{LTE, LESSGREATER},
-	{GTE, LESSGREATER},
-	{PLUS, SUM},
-	{MINUS, SUM},
-	{SLASH, PRODUCT},
-	{ASTERISK, PRODUCT},
-	{MODULO, PRODUCT},
-	{LPAREN, CALL},
-	{LBRACKET, INDEX},
-});
+
+Parser::Parser()
+{
+	precedences =
+		{
+			{EQ, EQUALS},
+			{NEQ, EQUALS},
+			{LTEQ, EQUALS},
+			{GTEQ, EQUALS},
+			{LT, LESSGREATER},
+			{GT, LESSGREATER},
+			{PLUS, SUM},
+			{MINUS, SUM},
+			{SLASH, PRODUCT},
+			{ASTERISK, PRODUCT},
+			{MODULO, PRODUCT},
+			{LPAREN, CALL},
+			{LBRACKET, INDEX},
+		};
+}
 
 void Parser::New(Lexer &lexer)
 {
@@ -25,8 +30,25 @@ void Parser::New(Lexer &lexer)
 	nextToken();
 	nextToken();
 
+	// prefix parse functions
 	prefixParseFns[IDENT] = &Parser::parseIdentifier; // address of method
 	prefixParseFns[INT] = &Parser::parseIntegerLiteral;
+
+	prefixParseFns[BANG] = &Parser::parsePrefixExpression;
+	prefixParseFns[MINUS] = &Parser::parsePrefixExpression;
+
+	// infix parse functions
+	infixParseFns[PLUS] = &Parser::parseInfixExpression;
+	infixParseFns[MINUS] = &Parser::parseInfixExpression;
+	infixParseFns[SLASH] = &Parser::parseInfixExpression;
+	infixParseFns[ASTERISK] = &Parser::parseInfixExpression;
+	infixParseFns[MODULO] = &Parser::parseInfixExpression;
+	infixParseFns[EQ] = &Parser::parseInfixExpression;
+	infixParseFns[NEQ] = &Parser::parseInfixExpression;
+	infixParseFns[LTEQ] = &Parser::parseInfixExpression;
+	infixParseFns[GTEQ] = &Parser::parseInfixExpression;
+	infixParseFns[LT] = &Parser::parseInfixExpression;
+	infixParseFns[GT] = &Parser::parseInfixExpression;
 }
 
 Expression *Parser::parseIdentifier()
@@ -162,6 +184,20 @@ Expression *Parser::parseExpression(Precedence precedence)
 
 	Expression *leftExp = (this->*prefix)(); // ->* operator is used to invoke method pointer
 
+	while (peekToken.type != SEMICOLON && precedence < peekPrecedence())
+	{
+		if (infixParseFns.find(peekToken.type) == infixParseFns.end())
+			return leftExp;
+
+		InfixParseFn infix = infixParseFns[peekToken.type];
+		if (infix == nullptr)
+			return leftExp;
+
+		nextToken();
+
+		leftExp = (this->*infix)(leftExp);
+	}
+
 	return leftExp;
 }
 
@@ -186,4 +222,46 @@ Expression *Parser::parseIntegerLiteral()
 	}
 
 	return intLit;
+}
+
+Expression *Parser::parsePrefixExpression()
+{
+	PrefixExpression *exp = new PrefixExpression();
+	exp->token = curToken;
+	exp->operand = curToken.literal;
+
+	nextToken();
+
+	exp->right = parseExpression(PREFIX);
+	return exp;
+}
+
+Expression *Parser::parseInfixExpression(Expression *left)
+{
+	InfixExpression *exp = new InfixExpression();
+	exp->token = curToken;
+	exp->operand = curToken.literal;
+	exp->left = left;
+
+	Precedence precedence = curPrecedence();
+
+	nextToken();
+
+	exp->right = parseExpression(precedence);
+
+	return exp;
+}
+
+Precedence Parser::curPrecedence()
+{
+	if (precedences.find(curToken.type) != precedences.end())
+		return precedences[curToken.type];
+	return LOWEST;
+}
+
+Precedence Parser::peekPrecedence()
+{
+	if (precedences.find(peekToken.type) != precedences.end())
+		return precedences[peekToken.type];
+	return LOWEST;
 }

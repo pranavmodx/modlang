@@ -37,8 +37,9 @@ const TokenType MODULO = "%";
 // comparison
 const TokenType LT = "<";
 const TokenType GT = ">";
-const TokenType LTE = "<=";
-const TokenType GTE = ">=";
+
+const TokenType LTEQ = "<=";
+const TokenType GTEQ = ">=";
 
 const TokenType EQ = "==";
 const TokenType NEQ = "!=";

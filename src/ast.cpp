@@ -29,23 +29,37 @@ std::string LetStatement::getStringRepr()
 	return res;
 }
 
-std::string ReturnStatement::getStringRepr() {
-  std::string res = tokenLiteral() + " ";
+std::string ReturnStatement::getStringRepr()
+{
+	std::string res = tokenLiteral() + " ";
 
-  res.push_back(';');
+	res.push_back(';');
 
-  return res;
+	return res;
 }
 
-std::string ExpressionStatement::getStringRepr() {
-  std::string res = "";
+std::string ExpressionStatement::getStringRepr()
+{
+	std::string res = "";
 
-  if(expression != nullptr) {
-    res += expression->getStringRepr();
-  }
+	if (expression != nullptr)
+	{
+		res += expression->getStringRepr();
+	}
 
-  res.push_back(';');
+	res.push_back(';');
 
-  return res;
+	return res;
 }
 
+std::string PrefixExpression::getStringRepr()
+{
+	std::string res = "(" + operand + right->getStringRepr() + ")";
+	return res;
+}
+
+std::string InfixExpression::getStringRepr()
+{
+	std::string res = "(" + left->getStringRepr() + operand + right->getStringRepr() + ")";
+	return res;
+}

@@ -5,58 +5,64 @@
 #include "../header/ast.hpp"
 
 #include <vector>
-#include <functional>
 #include <unordered_map>
 
 
 enum Precedence
 {
 	LOWEST,
-	EQUALS,      // ==
+	EQUALS,		 // ==
 	LESSGREATER, // > or <
-	SUM,         // +
-	PRODUCT,     // *
-	PREFIX,      // -X or !X
-	CALL,        // myFunction(X)
-	INDEX,       // []
+	SUM,		 // +
+	PRODUCT,	 // *
+	PREFIX,		 // -X or !X
+	CALL,		 // myFunction(X)
+	INDEX,		 // []
 };
-
-extern std::unordered_map<TokenType, Precedence> precedences;
 
 class Parser;
 
-typedef Expression* (Parser::*PrefixParseFn)(); // Pointer to function returning Expression* with no parameters
-typedef Expression* (Parser::*InfixParseFn)(Expression*); // Pointer to function returning Expression* which takes in Expression* as parameter
-// We can now say -> PrefixParseFn funcPtr = funcToPointTo;
+typedef Expression *(Parser::*PrefixParseFn)(); // Pointer to function returning Expression* with no parameters
+typedef Expression *(Parser::*InfixParseFn)(Expression *); // Pointer to function returning Expression* which takes in Expression* as parameter
+// // We can now say -> PrefixParseFn funcPtr = funcToPointTo;
 
-class Parser {
+class Parser
+{
 private:
 	Lexer lexer;
 	Token curToken;
 	Token peekToken;
 	std::vector<std::string> errors;
 
+	std::unordered_map<TokenType, Precedence> precedences;
+
 	std::unordered_map<TokenType, PrefixParseFn> prefixParseFns;
 	std::unordered_map<TokenType, InfixParseFn> infixParseFns;
 
-	Statement* parseStatement();
+	Precedence curPrecedence();
+	Precedence peekPrecedence();
 
-	LetStatement* parseLetStatement();
-	ReturnStatement* parseReturnStatement();
+	Statement *parseStatement();
 
-	ExpressionStatement* parseExpressionStatement();
-	Expression* parseExpression(Precedence precedence);
-	Expression* parseIdentifier();
-	Expression* parseIntegerLiteral();
+	LetStatement *parseLetStatement();
+	ReturnStatement *parseReturnStatement();
+
+	ExpressionStatement *parseExpressionStatement();
+	Expression *parseExpression(Precedence precedence);
+	Expression *parseIdentifier();
+	Expression *parseIntegerLiteral();
+	Expression *parsePrefixExpression();
+	Expression *parseInfixExpression(Expression *);
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);
 
 public:
+	Parser();
 	void New(Lexer &lexer);
 	void nextToken();
 	std::vector<std::string> Errors();
 	void resetErrors();
 
-	Program* ParseProgram();
+	Program *ParseProgram();
 };

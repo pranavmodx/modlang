@@ -109,3 +109,30 @@ public:
 	std::string getStringRepr() { return std::to_string(value); }
 	std::string nodeType() { return "IntegerLiteral"; }
 };
+
+class PrefixExpression : public Expression
+{
+public:
+	Token token;
+	std::string operand;
+	Expression *right;
+
+	void expressionNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "PrefixExpression"; }
+};
+
+class InfixExpression : public Expression
+{
+public:
+	Token token;
+	Expression *left;
+	std::string operand;
+	Expression *right;
+
+	void expressionNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "InfixExpression"; }
+};
