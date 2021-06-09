@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-
 Parser::Parser()
 {
 	precedences =
@@ -37,6 +36,14 @@ void Parser::New(Lexer &lexer)
 	prefixParseFns[BANG] = &Parser::parsePrefixExpression;
 	prefixParseFns[MINUS] = &Parser::parsePrefixExpression;
 
+	prefixParseFns[TRUE] = &Parser::parseBooleanLiteral;
+	prefixParseFns[FALSE] = &Parser::parseBooleanLiteral;
+
+	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
+
+	prefixParseFns[IF] = &Parser::parseIfExpression;
+	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
+
 	// infix parse functions
 	infixParseFns[PLUS] = &Parser::parseInfixExpression;
 	infixParseFns[MINUS] = &Parser::parseInfixExpression;
@@ -49,6 +56,8 @@ void Parser::New(Lexer &lexer)
 	infixParseFns[GTEQ] = &Parser::parseInfixExpression;
 	infixParseFns[LT] = &Parser::parseInfixExpression;
 	infixParseFns[GT] = &Parser::parseInfixExpression;
+
+	infixParseFns[LPAREN] = &Parser::parseCallExpression;
 }
 
 Expression *Parser::parseIdentifier()
@@ -110,11 +119,12 @@ LetStatement *Parser::parseLetStatement()
 	if (!expectPeek(ASSIGN))
 		return nullptr;
 
-	while (curToken.type != SEMICOLON)
-		nextToken();
+	nextToken();
 
-	// if (peekToken.type == SEMICOLON)
-	// nextToken();
+	stmt->value = parseExpression(LOWEST);
+
+	if (peekToken.type == SEMICOLON)
+		nextToken();
 
 	return stmt;
 }
@@ -131,6 +141,11 @@ bool Parser::expectPeek(const TokenType &tokenType)
 		peekError(tokenType);
 		return false;
 	}
+}
+
+void Parser::noPrefixParseFnError(TokenType type)
+{
+	errors.push_back("no prefix parse function for " + type);
 }
 
 std::vector<std::string> Parser::Errors()
@@ -157,7 +172,9 @@ ReturnStatement *Parser::parseReturnStatement()
 
 	nextToken();
 
-	while (curToken.type != SEMICOLON)
+	stmt->returnValue = parseExpression(LOWEST);
+
+	if (peekToken.type == SEMICOLON)
 		nextToken();
 
 	return stmt;
@@ -264,4 +281,179 @@ Precedence Parser::peekPrecedence()
 	if (precedences.find(peekToken.type) != precedences.end())
 		return precedences[peekToken.type];
 	return LOWEST;
+}
+
+Expression *Parser::parseBooleanLiteral()
+{
+	BooleanLiteral *ident = new BooleanLiteral();
+	ident->token = curToken;
+	ident->value = curToken.type == TRUE;
+	return ident;
+}
+
+Expression *Parser::parseGroupedExpression()
+{
+	nextToken(); // pass "("
+
+	Expression *exp = parseExpression(LOWEST);
+
+	if (!expectPeek(RPAREN))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	return exp;
+}
+
+Expression *Parser::parseIfExpression()
+{
+	IfExpression *exp = new IfExpression();
+	exp->token = curToken;
+
+	// condition
+	if (!expectPeek(LPAREN))
+	{
+		delete exp;
+		return nullptr;
+	}
+	nextToken();
+	exp->condition = parseExpression(LOWEST);
+	if (!expectPeek(RPAREN))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	// consequence
+	if (!expectPeek(LBRACE))
+	{
+		delete exp;
+		return nullptr;
+	}
+	exp->consequence = parseBlockStatement();
+
+	// else
+	if (peekToken.type == ELSE)
+	{
+		nextToken();
+		if (!expectPeek(LBRACE))
+		{
+			delete exp;
+			return nullptr;
+		}
+		exp->alternative = parseBlockStatement();
+	}
+	return exp;
+}
+
+BlockStatement *Parser::parseBlockStatement()
+{
+	BlockStatement *block = new BlockStatement();
+	block->token = curToken;
+
+	nextToken();
+
+	while (curToken.type != RBRACE && curToken.type != END)
+	{
+		Statement *stmt = parseStatement();
+		if (stmt != nullptr)
+		{
+			block->statements.push_back(stmt);
+		}
+		nextToken();
+	}
+	return block;
+}
+
+Expression *Parser::parseFunctionLiteral()
+{
+	FunctionLiteral *fn = new FunctionLiteral();
+	fn->token = curToken;
+
+	if (!expectPeek(LPAREN))
+	{ // in this function, only deal with "("
+		delete fn;
+		return nullptr;
+	}
+
+	fn->parameters = parseFunctionParameters();
+
+	if (!expectPeek(LBRACE))
+	{
+		delete fn;
+		return nullptr;
+	}
+
+	fn->body = parseBlockStatement();
+	return fn;
+}
+
+std::vector<Identifier *> Parser::parseFunctionParameters()
+{
+	std::vector<Identifier *> parameters;
+
+	if (peekToken.type == RPAREN)
+	{ // no parameters
+		nextToken();
+		return parameters;
+	}
+
+	nextToken(); // pass "," or "("
+
+	Identifier *ident = new Identifier();
+	ident->token = curToken;
+	ident->value = curToken.literal;
+	parameters.push_back(ident);
+
+	while (peekToken.type == COMMA)
+	{
+		nextToken();
+		nextToken();
+		Identifier *ident = new Identifier();
+		ident->token = curToken;
+		ident->value = curToken.literal;
+		parameters.push_back(ident);
+	}
+
+	if (!expectPeek(RPAREN))
+		return std::vector<Identifier *>();
+
+	return parameters;
+}
+
+Expression *Parser::parseCallExpression(Expression *function)
+{
+	CallExpression *exp = new CallExpression();
+	exp->token = curToken;
+	exp->function = function;
+
+	if (peekToken.type == RPAREN)
+	{
+		nextToken();
+		return exp;
+	}
+
+	exp->arguments = parseExpressionList();
+	if (!expectPeek(RPAREN))
+		exp->arguments = std::vector<Expression *>();
+
+	return exp;
+}
+
+std::vector<Expression *> Parser::parseExpressionList()
+{
+	std::vector<Expression *> arguments;
+
+	nextToken();
+	arguments.push_back(parseExpression(LOWEST));
+
+	while (peekToken.type == COMMA)
+	{
+		nextToken();
+		nextToken();
+		arguments.push_back(parseExpression(LOWEST));
+	}
+
+	return arguments;
 }

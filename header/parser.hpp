@@ -7,7 +7,6 @@
 #include <vector>
 #include <unordered_map>
 
-
 enum Precedence
 {
 	LOWEST,
@@ -22,7 +21,7 @@ enum Precedence
 
 class Parser;
 
-typedef Expression *(Parser::*PrefixParseFn)(); // Pointer to function returning Expression* with no parameters
+typedef Expression *(Parser::*PrefixParseFn)();			   // Pointer to function returning Expression* with no parameters
 typedef Expression *(Parser::*InfixParseFn)(Expression *); // Pointer to function returning Expression* which takes in Expression* as parameter
 // // We can now say -> PrefixParseFn funcPtr = funcToPointTo;
 
@@ -46,16 +45,27 @@ private:
 
 	LetStatement *parseLetStatement();
 	ReturnStatement *parseReturnStatement();
+	BlockStatement *parseBlockStatement();
+
+	std::vector<Identifier *> parseFunctionParameters();
+	std::vector<Expression *> parseExpressionList();
 
 	ExpressionStatement *parseExpressionStatement();
 	Expression *parseExpression(Precedence precedence);
-	Expression *parseIdentifier();
-	Expression *parseIntegerLiteral();
 	Expression *parsePrefixExpression();
 	Expression *parseInfixExpression(Expression *);
+	Expression *parseGroupedExpression();
+	Expression *parseIfExpression();
+	Expression *parseCallExpression(Expression *function);
+
+	Expression *parseIdentifier();
+	Expression *parseIntegerLiteral();
+	Expression *parseBooleanLiteral();
+	Expression *parseFunctionLiteral();
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);
+	void noPrefixParseFnError(TokenType type);
 
 public:
 	Parser();

@@ -22,7 +22,7 @@ std::string Program::getStringRepr()
 
 std::string LetStatement::getStringRepr()
 {
-	std::string res = tokenLiteral() + " " + name.getStringRepr() + " = ";
+	std::string res = tokenLiteral() + " " + name.getStringRepr() + " = " + value->getStringRepr();
 
 	res.push_back(';');
 
@@ -31,7 +31,7 @@ std::string LetStatement::getStringRepr()
 
 std::string ReturnStatement::getStringRepr()
 {
-	std::string res = tokenLiteral() + " ";
+	std::string res = tokenLiteral() + " " + returnValue->getStringRepr();
 
 	res.push_back(';');
 
@@ -55,11 +55,58 @@ std::string ExpressionStatement::getStringRepr()
 std::string PrefixExpression::getStringRepr()
 {
 	std::string res = "(" + operand + right->getStringRepr() + ")";
+
 	return res;
 }
 
 std::string InfixExpression::getStringRepr()
 {
 	std::string res = "(" + left->getStringRepr() + operand + right->getStringRepr() + ")";
+
+	return res;
+}
+
+std::string BlockStatement::getStringRepr()
+{
+	std::string res = "{ ";
+	for (auto stmt : statements)
+	{
+		res += stmt->getStringRepr() + " ";
+	}
+	res += "}";
+
+	return res;
+}
+
+std::string IfExpression::getStringRepr()
+{
+	std::string res = "if " + std::string("(") + condition->getStringRepr() + ")" + " " + consequence->getStringRepr();
+	if (alternative != nullptr)
+		res += " else " + alternative->getStringRepr();
+
+	return res;
+}
+
+std::string FunctionLiteral::getStringRepr()
+{
+	std::string res = tokenLiteral() + " (";
+	for (auto param : parameters)
+		res += param->getStringRepr() + ", ";
+
+	res += ")";
+	res += body->getStringRepr();
+
+	return res;
+}
+
+std::string CallExpression::getStringRepr()
+{
+	std::string res = function->getStringRepr() + "(";
+
+	for (auto arg : arguments)
+		res += arg->getStringRepr() + ", ";
+
+	res += ")";
+
 	return res;
 }
