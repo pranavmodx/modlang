@@ -11,6 +11,7 @@ void rlpl()
 
 	Token token;
 	Lexer lexer;
+	
 	std::string line;
 
 	while (true)

@@ -1,9 +1,9 @@
 #pragma once
 
+#include "token.hpp"
+
 #include <string>
 #include <vector>
-
-#include "token.hpp"
 
 class Node
 {
@@ -204,7 +204,7 @@ public:
 	std::vector<Expression *> arguments;
 
 	void expressionNode() {}
-	
+
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "CallExpression"; }

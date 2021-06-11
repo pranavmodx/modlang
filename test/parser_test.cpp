@@ -5,6 +5,7 @@
 void checkParserErrors(Parser &parser);
 
 bool testLetStatement(LetStatement *stmt, std::string expectedName);
+
 void TestLetStatement();
 void TestReturnStatement();
 void TestIdentifierExpression();

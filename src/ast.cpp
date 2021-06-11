@@ -89,11 +89,14 @@ std::string IfExpression::getStringRepr()
 
 std::string FunctionLiteral::getStringRepr()
 {
-	std::string res = tokenLiteral() + " (";
+	std::string res = tokenLiteral() + "(";
 	for (auto param : parameters)
-		res += param->getStringRepr() + ", ";
+		res += param->getStringRepr() + ",";
 
-	res += ")";
+	res.pop_back();
+	res.pop_back();
+
+	res.push_back(')');
 	res += body->getStringRepr();
 
 	return res;
@@ -104,9 +107,10 @@ std::string CallExpression::getStringRepr()
 	std::string res = function->getStringRepr() + "(";
 
 	for (auto arg : arguments)
-		res += arg->getStringRepr() + ", ";
+		res += arg->getStringRepr() + ",";
 
-	res += ")";
+	res.pop_back();
+	res.push_back(')');
 
 	return res;
 }

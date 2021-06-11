@@ -1,6 +1,5 @@
 #include "../header/token.hpp"
 
-
 std::unordered_map<std::string, TokenType> keywords = {
     {"let", LET},
     {"def", FUNCTION},

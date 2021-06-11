@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 
-
 typedef std::string TokenType;
 
 class Token
@@ -15,14 +14,14 @@ public:
 	Token() {}
 	Token(TokenType type, std::string literal) : type(type), literal(literal) {}
 	// check
-  	Token(TokenType type, char ch) : type(type), literal(std::string(1, ch)) {}
+	Token(TokenType type, char ch) : type(type), literal(std::string(1, ch)) {}
 };
 
 const TokenType ILLEGAL = "ILLEGAL"; // unknown token
-const TokenType END = "END"; // end of file
+const TokenType END = "END";		 // end of file
 
-const TokenType IDENT = "IDENT"; // identifiers
-const TokenType INT = "INT"; // int data type
+const TokenType IDENT = "IDENT";   // identifiers
+const TokenType INT = "INT";	   // int data type
 const TokenType STRING = "STRING"; // string data type
 
 // operators

@@ -4,44 +4,45 @@
 #include <vector>
 #include <utility>
 
-
 void testNextToken();
 
-int main() {
+int main()
+{
 	testNextToken();
 }
 
-void testNextToken() {
-	std::string input = 
-	"let five = 5; "
-	"let ten = 10; "
+void testNextToken()
+{
+	std::string input =
+		"let five = 5; "
+		"let ten = 10; "
 
-	"let add = def(x, y) { "
-	"x + y; "
-	"}; "
-	"let result = add(five, ten); "
+		"let add = def(x, y) { "
+		"x + y; "
+		"}; "
+		"let result = add(five, ten); "
 
-	"!-/*5; "
-	"5 < 10 > 5; "
+		"!-/*5; "
+		"5 < 10 > 5; "
 
-	"if (5 < 10) { "
+		"if (5 < 10) { "
 		"return true; "
-	"} else { "
+		"} else { "
 		"return false; "
-	"} "
+		"} "
 
-	"10 == 10; "
-	"10 != 9; "
+		"10 == 10; "
+		"10 != 9; "
 
-	"\"foobar\" "
-	"\"foo bar\" "
+		"\"foobar\" "
+		"\"foo bar\" "
 
-	"[1, 2]; "
-	"{\"foo\": \"bar\"} ";
+		"[1, 2]; "
+		"{\"foo\": \"bar\"} ";
 
 	std::vector<std::pair<TokenType, std::string>> tests;
 	tests.reserve(100);
-	
+
 	tests = {
 		{LET, "let"},
 		{IDENT, "five"},
@@ -129,14 +130,14 @@ void testNextToken() {
 		{COLON, ":"},
 		{STRING, "bar"},
 		{RBRACE, "}"},
-		{END, ""}
-	};
+		{END, ""}};
 
 	Lexer lexer;
 	lexer.New(input);
 
 	Token token;
-	for (int i=0; i<tests.size(); i++) {
+	for (int i = 0; i < tests.size(); i++)
+	{
 		token = lexer.nextToken();
 
 		if (token.type != tests[i].first)
@@ -146,4 +147,3 @@ void testNextToken() {
 			std::cout << i << "expected " << tests[i].second << ", got " << token.literal << std::endl;
 	}
 }
-

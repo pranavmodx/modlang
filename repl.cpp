@@ -1,16 +1,19 @@
 #include <iostream>
 #include <string>
 
+#include "./header/lexer.hpp"
 #include "./header/parser.hpp"
+#include "./header/evaluator.hpp"
 
-// Read "Parse" Print Loop
-void rppl()
+// Read Evaluate Print Loop
+void repl()
 {
 	const std::string PROMPT = ">> ";
 
 	Lexer lexer;
 	Parser parser;
-	
+	Evaluator evaluator;
+
 	std::string line;
 
 	while (true)
@@ -27,8 +30,11 @@ void rppl()
 		if (parser.Errors().size())
 			for (std::string error : parser.Errors())
 				std::cout << error << std::endl;
-		else
-			std::cout << program->getStringRepr() << std::endl;
+		else {
+			Object *obj = evaluator.Eval(program);
+			if (obj)
+				std::cout << obj->inspect() << std::endl;
+		}
 
 		parser.resetErrors();
 	}
@@ -36,7 +42,7 @@ void rppl()
 
 int main()
 {
-	rppl();
+	repl();
 
 	return 0;
 }

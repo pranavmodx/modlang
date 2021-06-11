@@ -4,13 +4,12 @@
 
 #include <string>
 
-
 class Lexer
 {
 private:
 	std::string input;
-	int pos; // current position in input (points to current char)
-	int readPos; // current reading position in input (after current char)
+	int pos;	  // current position in input (points to current char)
+	int readPos;  // current reading position in input (after current char)
 	char curChar; // current char under examination
 
 	void skipWhitespace();

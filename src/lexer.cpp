@@ -2,7 +2,6 @@
 
 #include <ctype.h>
 
-
 // Utility functions
 
 bool isLetter(char curChar)
@@ -15,7 +14,6 @@ bool isDigit(char curChar)
 	// check
 	return isdigit(curChar);
 }
-
 
 void Lexer::New(std::string &input)
 {
@@ -116,7 +114,7 @@ Token Lexer::nextToken()
 	case '<':
 		if (peekChar() == '=')
 		{
-			token = Token(LTE, "<=");
+			token = Token(LTEQ, "<=");
 			readChar();
 		}
 		else
@@ -128,7 +126,7 @@ Token Lexer::nextToken()
 	case '>':
 		if (peekChar() == '=')
 		{
-			token = Token(GTE, ">=");
+			token = Token(GTEQ, ">=");
 			readChar();
 		}
 		else
