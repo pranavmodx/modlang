@@ -363,6 +363,7 @@ BlockStatement *Parser::parseBlockStatement()
 		}
 		nextToken();
 	}
+	
 	return block;
 }
 
