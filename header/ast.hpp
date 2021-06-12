@@ -1,9 +1,9 @@
 #pragma once
 
-#include "token.hpp"
-
 #include <string>
 #include <vector>
+
+#include "token.hpp"
 
 class Node
 {

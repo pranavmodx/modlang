@@ -1,11 +1,11 @@
 #pragma once
 
+#include <vector>
+#include <unordered_map>
+
 #include "../header/token.hpp"
 #include "../header/lexer.hpp"
 #include "../header/ast.hpp"
-
-#include <vector>
-#include <unordered_map>
 
 enum Precedence
 {

@@ -9,8 +9,8 @@ rlpl: rlpl.o token.o lexer.o
 rppl: rppl.o token.o lexer.o ast.o parser.o
 	g++ -std=c++17 -o rppl rppl.o token.o lexer.o ast.o parser.o
 
-repl: repl.o token.o lexer.o ast.o parser.o object.o evaluator.o
-	g++ -std=c++17 -o repl repl.o token.o lexer.o ast.o parser.o object.o evaluator.o
+repl: repl.o token.o lexer.o ast.o parser.o object.o environment.o evaluator.o
+	g++ -std=c++17 -o repl repl.o token.o lexer.o ast.o parser.o object.o environment.o evaluator.o
 
 lexer_test: lexer_test.o token.o lexer.o
 	g++ -std=c++17 -o lexer_test lexer_test.o token.o lexer.o
@@ -18,8 +18,8 @@ lexer_test: lexer_test.o token.o lexer.o
 parser_test: parser_test.o token.o lexer.o ast.o parser.o
 	g++ -std=c++17 -o parser_test parser_test.o token.o lexer.o ast.o parser.o
 
-evaluator_test: evaluator_test.o token.o lexer.o ast.o parser.o object.o evaluator.o
-	g++ -std=c++17 -o evaluator_test evaluator_test.o token.o lexer.o ast.o parser.o object.o evaluator.o
+evaluator_test: evaluator_test.o token.o lexer.o ast.o parser.o object.o  environment.o evaluator.o
+	g++ -std=c++17 -o evaluator_test evaluator_test.o token.o lexer.o ast.o parser.o object.o environment.o evaluator.o
 
 
 # specifies individual obj's file dependencies and recipe (command)
@@ -54,11 +54,14 @@ lexer.o: src/lexer.cpp header/lexer.hpp
 ast.o: src/ast.cpp header/ast.hpp
 	g++ -std=c++17 -c src/ast.cpp
 
+parser.o: src/parser.cpp header/parser.hpp
+	g++ -std=c++17 -c src/parser.cpp
+
 object.o: src/object.cpp header/object.hpp
 	g++ -std=c++17 -c src/object.cpp
 
-parser.o: src/parser.cpp header/parser.hpp
-	g++ -std=c++17 -c src/parser.cpp
+environment.o: src/environment.cpp header/environment.hpp
+	g++ -std=c++17 -c src/environment.cpp
 
 evaluator.o: src/evaluator.cpp header/evaluator.hpp
 	g++ -std=c++17 -c src/evaluator.cpp

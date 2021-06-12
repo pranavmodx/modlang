@@ -4,7 +4,7 @@
 #include "./header/parser.hpp"
 
 // Read "Parse" Print Loop
-void rppl()
+void RPPL()
 {
 	const std::string PROMPT = ">> ";
 
@@ -36,7 +36,7 @@ void rppl()
 
 int main()
 {
-	rppl();
+	RPPL();
 
 	return 0;
 }

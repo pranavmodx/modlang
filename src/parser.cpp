@@ -194,8 +194,10 @@ ExpressionStatement *Parser::parseExpressionStatement()
 
 Expression *Parser::parseExpression(Precedence precedence)
 {
-	if (prefixParseFns.find(curToken.type) == prefixParseFns.end())
+	if (prefixParseFns.find(curToken.type) == prefixParseFns.end()) {
+		noPrefixParseFnError(curToken.type);
 		return nullptr;
+	}
 
 	PrefixParseFn prefix = prefixParseFns[curToken.type];
 

@@ -6,13 +6,15 @@
 #include "./header/evaluator.hpp"
 
 // Read Evaluate Print Loop
-void repl()
+void REPL()
 {
 	const std::string PROMPT = ">> ";
 
 	Lexer lexer;
 	Parser parser;
 	Evaluator evaluator;
+
+	Environment *env = new Environment();
 
 	std::string line;
 
@@ -31,8 +33,8 @@ void repl()
 			for (std::string error : parser.Errors())
 				std::cout << error << std::endl;
 		else {
-			Object *obj = evaluator.Eval(program);
-			if (obj)
+			Object *obj = evaluator.Eval(program, env);
+			if (obj != __NULL)
 				std::cout << obj->inspect() << std::endl;
 		}
 
@@ -42,7 +44,7 @@ void repl()
 
 int main()
 {
-	repl();
+	REPL();
 
 	return 0;
 }

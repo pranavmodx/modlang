@@ -3,6 +3,7 @@
 #include "../header/lexer.hpp"
 #include "../header/parser.hpp"
 #include "../header/evaluator.hpp"
+#include "../header/environment.hpp"
 
 void TestEvalIntegerExpression();
 Object *testEval(std::string input);
@@ -38,8 +39,9 @@ Object *testEval(std::string input)
 	Program *program = parser.ParseProgram();
 
 	Evaluator evaluator;
-	Object *obj = evaluator.Eval(program);
+	Environment *env = new Environment();
 
+	Object *obj = evaluator.Eval(program, env);
 	return obj;
 }
 

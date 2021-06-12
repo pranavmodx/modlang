@@ -22,28 +22,37 @@ bool isTruthy(Object *condition)
 		return true;
 }
 
-Object *Evaluator::Eval(Node *node)
+Object *Evaluator::Eval(Node *node, Environment *env)
 {
 	std::string nodeType = node->nodeType();
 
 	// Statements
 	if (nodeType == "Program")
-		return evalProgram(((Program *)node));
+		return evalProgram(((Program *)node), env);
 
 	else if (nodeType == "ExpressionStatement")
-		return Eval(((ExpressionStatement *)node)->expression);
+		return Eval(((ExpressionStatement *)node)->expression, env);
 
 	else if (nodeType == "BlockStatement")
-		return evalBlockStatement(((BlockStatement *)node));
+		return evalBlockStatement(((BlockStatement *)node), env);
 
 	else if (nodeType == "ReturnStatement")
 	{
-		Object *value = Eval(((ReturnStatement *)node)->returnValue);
+		Object *value = Eval(((ReturnStatement *)node)->returnValue, env);
 		if (isError(value))
 			return value;
-			
+
 		ReturnValue *returnValue = new ReturnValue(value);
 		return returnValue;
+	}
+
+	else if (nodeType == "LetStatement")
+	{
+		Object *value = Eval(((LetStatement *)node)->value, env);
+		if (isError(value))
+			return value;
+
+		env->Set((((LetStatement *)node)->name).value, value);
 	}
 
 	// Expressions
@@ -62,7 +71,7 @@ Object *Evaluator::Eval(Node *node)
 
 	else if (nodeType == "PrefixExpression")
 	{
-		Object *right = Eval(((PrefixExpression *)node)->right);
+		Object *right = Eval(((PrefixExpression *)node)->right, env);
 		if (isError(right))
 			return right;
 
@@ -71,11 +80,11 @@ Object *Evaluator::Eval(Node *node)
 
 	else if (nodeType == "InfixExpression")
 	{
-		Object *left = Eval(((InfixExpression *)node)->left);
+		Object *left = Eval(((InfixExpression *)node)->left, env);
 		if (isError(left))
 			return left;
 
-		Object *right = Eval(((InfixExpression *)node)->right);
+		Object *right = Eval(((InfixExpression *)node)->right, env);
 		if (isError(right))
 			return right;
 
@@ -83,18 +92,21 @@ Object *Evaluator::Eval(Node *node)
 	}
 
 	else if (nodeType == "IfExpression")
-		return evalIfExpression((IfExpression *)node);
+		return evalIfExpression((IfExpression *)node, env);
+
+	else if (nodeType == "Identifier")
+		return evalIdentifier((Identifier *)node, env);
 
 	return __NULL;
 }
 
-Object *Evaluator::evalProgram(Program *program)
+Object *Evaluator::evalProgram(Program *program, Environment *env)
 {
 	Object *result;
 
 	for (Statement *stmt : program->statements)
 	{
-		result = Eval(stmt);
+		result = Eval(stmt, env);
 
 		if (result->type() == RETURN_VALUE_OBJ || result->type() == ERROR_OBJ)
 			return ((ReturnValue *)result)->value;
@@ -106,13 +118,13 @@ Object *Evaluator::evalProgram(Program *program)
 	return result;
 }
 
-Object *Evaluator::evalBlockStatement(BlockStatement *blockStmt)
+Object *Evaluator::evalBlockStatement(BlockStatement *blockStmt, Environment *env)
 {
 	Object *result;
 
 	for (Statement *stmt : blockStmt->statements)
 	{
-		result = Eval(stmt);
+		result = Eval(stmt, env);
 		if (result->type() == "RETURN_VALUE" || result->type() == "ERROR")
 			return (ReturnValue *)result;
 	}
@@ -161,6 +173,7 @@ Object *Evaluator::evalPrefixExpression(std::string operand, Object *right)
 		return evalMinusPrefixExpression(right);
 
 	Object *error = new Error("unknown operator: " + operand + right->type());
+	return error;
 }
 
 Object *Evaluator::evalInfixExpression(std::string operand, Object *left, Object *right)
@@ -232,15 +245,21 @@ Object *Evaluator::evalIntegerInfixExpression(std::string operand, Object *left,
 	return res;
 }
 
-Object *Evaluator::evalIfExpression(IfExpression *ifExpr)
+Object *Evaluator::evalIfExpression(IfExpression *ifExpr, Environment *env)
 {
-	Object *condition = Eval(ifExpr->condition);
+	Object *condition = Eval(ifExpr->condition, env);
 
 	if (isTruthy(condition))
-		return Eval(ifExpr->consequence);
+		return Eval(ifExpr->consequence, env);
 
 	else if (ifExpr->alternative != nullptr)
-		return Eval(ifExpr->alternative);
+		return Eval(ifExpr->alternative, env);
 
 	return __NULL;
+}
+
+Object *Evaluator::evalIdentifier(Identifier *ident, Environment *env)
+{
+	Object *obj = env->Get(ident->value);
+	return obj;
 }

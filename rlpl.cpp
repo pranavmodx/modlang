@@ -5,7 +5,7 @@
 
 
 // Read "Lex" Print Loop
-void rlpl()
+void RLPL()
 {
 	const std::string PROMPT = ">> ";
 
@@ -35,7 +35,7 @@ void rlpl()
 
 int main()
 {
-	rlpl();
+	RLPL();
 	
 	return 0;
 }
