@@ -157,6 +157,18 @@ public:
 	std::string nodeType() { return "BooleanLiteral"; }
 };
 
+class StringLiteral : public Expression
+{
+public:
+	Token token;
+	std::string value;
+
+	void expressionNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr() { return value; }
+	std::string nodeType() { return "StringLiteral"; }
+};
+
 class BlockStatement : public Statement
 {
 public:
@@ -208,4 +220,38 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "CallExpression"; }
+};
+
+class ArrayLiteral : public Expression
+{
+public:
+	Token token;
+	std::vector<Expression *> elements;
+
+	~ArrayLiteral()
+	{
+		for (auto elem : elements)
+			delete elem;
+	}
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "ArrayLiteral"; }
+
+};
+
+class IndexExpression : public Expression
+{
+public:
+	Token token;
+	Expression *array;
+	Expression *index;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "IndexExpression"; }
 };

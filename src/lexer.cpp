@@ -22,63 +22,6 @@ void Lexer::New(std::string &input)
 	readChar();
 }
 
-void Lexer::readChar()
-{
-	if (readPos >= input.size())
-		curChar = 0; // 0 -> end of file
-	else
-		curChar = input[readPos];
-
-	pos = readPos;
-	readPos++;
-}
-
-char Lexer::peekChar()
-{
-	if (readPos >= input.size())
-		return 0;
-	else
-		return input[readPos];
-}
-
-std::string Lexer::readIdentifier()
-{
-	int start = pos;
-
-	while (isLetter(curChar))
-		readChar();
-
-	return input.substr(start, pos - start);
-}
-
-std::string Lexer::readNumber()
-{
-	int start = pos;
-
-	while (isDigit(curChar))
-		readChar();
-
-	return input.substr(start, pos - start); // check
-}
-
-std::string Lexer::readString()
-{
-	int start = pos + 1;
-
-	do
-	{
-		readChar();
-	} while (curChar != '"' && curChar != 0);
-
-	return input.substr(start, pos - start);
-}
-
-void Lexer::skipWhitespace()
-{
-	while (curChar == ' ' || curChar == '\t' || curChar == '\r' || curChar == '\n')
-		readChar();
-}
-
 Token Lexer::nextToken()
 {
 	Token token;
@@ -237,4 +180,63 @@ Token Lexer::nextToken()
 	}
 
 	return token;
+}
+
+void Lexer::readChar()
+{
+	if (readPos >= input.size())
+		curChar = 0; // 0 -> end of file
+	else
+		curChar = input[readPos];
+
+	pos = readPos;
+	readPos++;
+}
+
+char Lexer::peekChar()
+{
+	if (readPos >= input.size())
+		return 0;
+	else
+		return input[readPos];
+}
+
+std::string Lexer::readIdentifier()
+{
+	int start = pos;
+
+	while (isLetter(curChar))
+		readChar();
+
+	return input.substr(start, pos - start);
+}
+
+std::string Lexer::readNumber()
+{
+	int start = pos;
+
+	while (isDigit(curChar))
+		readChar();
+
+	return input.substr(start, pos - start); // check
+}
+
+std::string Lexer::readString()
+{
+	int start = pos + 1;
+
+	do
+	{
+		readChar();
+	} while (curChar != '"' && curChar != 0);
+
+	// todo: throw error if ending " not found
+
+	return input.substr(start, pos - start);
+}
+
+void Lexer::skipWhitespace()
+{
+	while (curChar == ' ' || curChar == '\t' || curChar == '\r' || curChar == '\n')
+		readChar();
 }

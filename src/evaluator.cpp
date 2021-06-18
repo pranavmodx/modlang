@@ -65,8 +65,12 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "BooleanLiteral")
 	{
 		return ((BooleanLiteral *)node)->value ? __TRUE : __FALSE;
+	}
 
-		return __NULL;
+	else if (nodeType == "StringLiteral")
+	{
+		String *str = new String(((StringLiteral *)node)->value);
+		return str;
 	}
 
 	else if (nodeType == "PrefixExpression")
@@ -124,6 +128,41 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		}
 
 		return evalCallExpression(fn, args);
+	}
+
+	else if (nodeType == "ArrayLiteral")
+	{
+		std::vector<Object *> elems;
+
+		for (auto *element : ((ArrayLiteral *)node)->elements)
+		{
+			Object *elem = Eval(element, env);
+
+			if (isError(elem))
+				return elem;
+
+			elems.push_back(elem);
+		}
+
+		return new Array(elems);
+	}
+
+	else if (nodeType == "IndexExpression")
+	{
+		Object *array = Eval(((IndexExpression *)node)->array, env);
+
+		if (isError(array))
+			return array;
+
+		env->Set(std::to_string((intptr_t)array), array);
+
+		Object *index = Eval(((IndexExpression *)node)->index, env);
+		env->store.erase(std::to_string((intptr_t)array));
+
+		if (isError(index))
+			return index;
+
+		return evalIndexExpression(array, index, env);
 	}
 
 	return __NULL;
@@ -212,6 +251,9 @@ Object *Evaluator::evalInfixExpression(std::string operand, Object *left, Object
 	if (left->type() == INTEGER_OBJ && right->type() == INTEGER_OBJ)
 		return evalIntegerInfixExpression(operand, left, right);
 
+	else if (left->type() == STRING_OBJ && right->type() == STRING_OBJ)
+		return evalStringInfixExpression(operand, left, right);
+
 	else if (left == __NULL || right == __NULL)
 		return __NULL;
 
@@ -274,6 +316,21 @@ Object *Evaluator::evalIntegerInfixExpression(std::string operand, Object *left,
 	return res;
 }
 
+Object *Evaluator::evalStringInfixExpression(std::string operand, Object *left, Object *right)
+{
+	std::string leftVal = ((String *)left)->value;
+	std::string rightVal = ((String *)right)->value;
+
+	Object *res;
+
+	if (operand == "+")
+		res = new String(leftVal + rightVal);
+	else
+		return new Error("unknown operator: " + left->type() + " " + operand + " " + right->type());
+
+	return res;
+}
+
 Object *Evaluator::evalIfExpression(IfExpression *ifExpr, Environment *env)
 {
 	Object *condition = Eval(ifExpr->condition, env);
@@ -321,4 +378,46 @@ Environment *Evaluator::extendFunctionEnv(Function *fn, std::vector<Object *> &a
 		env->Set(fn->parameters[i]->value, args[i]);
 
 	return env;
+}
+
+Object *Evaluator::evalIndexExpression(Object *array, Object *index, Environment *env)
+{
+	if (array->type() == ARRAY_OBJ && index->type() == INTEGER_OBJ)
+		return evalArrayIndexExpression((Array *)array, (Integer *)index);
+
+	if (array->type() == STRING_OBJ && index->type() == INTEGER_OBJ)
+		return evalStringIndexExpression((String *)array, (Integer *)index);
+
+	else
+		return new Error("index operator not supported: " + array->type());
+}
+
+Object *Evaluator::evalArrayIndexExpression(Array *array, Integer *index)
+{
+	int i = index->value;
+	auto arr = array->elements;
+
+	try
+	{
+		return arr[i];
+	}
+	catch (const std::out_of_range e)
+	{
+		return new Error("index " + index->inspect() + " out of range");
+	}
+}
+
+Object *Evaluator::evalStringIndexExpression(String *array, Integer *index)
+{
+	int i = index->value;
+	auto arr = array->value;
+
+	try
+	{
+		return new String(std::string(1, arr[i]));
+	}
+	catch (const std::out_of_range e)
+	{
+		return new Error("index " + index->inspect() + " out of range");
+	}
 }

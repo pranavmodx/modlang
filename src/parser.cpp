@@ -39,10 +39,14 @@ void Parser::New(Lexer &lexer)
 	prefixParseFns[TRUE] = &Parser::parseBooleanLiteral;
 	prefixParseFns[FALSE] = &Parser::parseBooleanLiteral;
 
+	prefixParseFns[STRING] = &Parser::parseStringLiteral;
+
 	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
 
 	prefixParseFns[IF] = &Parser::parseIfExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
+
+	prefixParseFns[LBRACKET] = &Parser::parseArrayLiteral;
 
 	// infix parse functions
 	infixParseFns[PLUS] = &Parser::parseInfixExpression;
@@ -58,6 +62,8 @@ void Parser::New(Lexer &lexer)
 	infixParseFns[GT] = &Parser::parseInfixExpression;
 
 	infixParseFns[LPAREN] = &Parser::parseCallExpression;
+
+	infixParseFns[LBRACKET] = &Parser::parseIndexExpression;
 }
 
 Expression *Parser::parseIdentifier()
@@ -194,7 +200,8 @@ ExpressionStatement *Parser::parseExpressionStatement()
 
 Expression *Parser::parseExpression(Precedence precedence)
 {
-	if (prefixParseFns.find(curToken.type) == prefixParseFns.end()) {
+	if (prefixParseFns.find(curToken.type) == prefixParseFns.end())
+	{
 		noPrefixParseFnError(curToken.type);
 		return nullptr;
 	}
@@ -293,6 +300,14 @@ Expression *Parser::parseBooleanLiteral()
 	return ident;
 }
 
+Expression *Parser::parseStringLiteral()
+{
+	StringLiteral *s = new StringLiteral();
+	s->token = curToken;
+	s->value = curToken.literal;
+	return s;
+}
+
 Expression *Parser::parseGroupedExpression()
 {
 	nextToken(); // pass "("
@@ -365,7 +380,7 @@ BlockStatement *Parser::parseBlockStatement()
 		}
 		nextToken();
 	}
-	
+
 	return block;
 }
 
@@ -459,4 +474,39 @@ std::vector<Expression *> Parser::parseExpressionList()
 	}
 
 	return arguments;
+}
+
+Expression *Parser::parseArrayLiteral()
+{
+	ArrayLiteral *exp = new ArrayLiteral();
+	exp->token = curToken;
+
+	if (peekToken.type == RBRACKET)
+	{
+		nextToken();
+		return exp;
+	}
+
+	exp->elements = parseExpressionList();
+
+	if (!expectPeek(RBRACKET))
+		exp->elements = std::vector<Expression *>();
+
+	return exp;
+}
+
+Expression *Parser::parseIndexExpression(Expression *array)
+{
+	IndexExpression *exp = new IndexExpression();
+	exp->token = curToken;
+	exp->array = array;
+
+	nextToken();
+
+	exp->index = parseExpression(LOWEST);
+
+	if (!expectPeek(RBRACKET))
+		return nullptr;
+
+	return exp;
 }

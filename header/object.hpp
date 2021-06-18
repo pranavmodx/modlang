@@ -6,10 +6,13 @@ typedef std::string ObjectType;
 
 const ObjectType INTEGER_OBJ = "INTEGER";
 const ObjectType BOOLEAN_OBJ = "BOOLEAN";
+const ObjectType STRING_OBJ = "STRING";
 const ObjectType NULL_OBJ = "NULL";
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
 const ObjectType ERROR_OBJ = "ERROR";
 const ObjectType FUNCTION_OBJ = "FUNCTION";
+const ObjectType ARRAY_OBJ = "ARRAY";
+const ObjectType BUILTIN_OBJ = "BUILTIN";
 
 class Object
 {
@@ -36,6 +39,16 @@ public:
 	Boolean(bool b) : Object(), value(b) {}
 	ObjectType type() { return BOOLEAN_OBJ; }
 	std::string inspect() { return value ? "true" : "false"; }
+};
+
+class String : public Object
+{
+public:
+	std::string value;
+
+	String(std::string s) : Object(), value(s) {}
+	ObjectType type() { return STRING_OBJ; }
+	std::string inspect() { return value; }
 };
 
 class Null : public Object
@@ -94,10 +107,45 @@ public:
 
 		res.pop_back();
 		res.pop_back();
+
 		res += ")" + std::string("{\n") + body->getStringRepr() + std::string("\n}");
 
 		return res;
 	}
+};
+
+class Array : public Object
+{
+public:
+	Array(std::vector<Object *> &elems) : Object(), elements(elems) {}
+
+	ObjectType type() { return ARRAY_OBJ; }
+
+	std::string inspect()
+	{
+		std::string res = "[";
+		for (auto elem : elements)
+			res += elem->inspect() + ", ";
+	
+		res.pop_back();
+		res.pop_back();
+
+		res.push_back(']');
+
+		return res;
+	}
+
+	std::vector<Object *> elements;
+};
+
+class Builtin : public Object
+{
+public:
+	Object *(*function)(std::vector<Object *> &);
+
+	Builtin(Object *(*fn)(std::vector<Object *> &)) : Object(), function(fn) {}
+	ObjectType type() { return BUILTIN_OBJ; }
+	std::string inspect() { return "Builtin Function"; }
 };
 
 extern Null *__NULL;

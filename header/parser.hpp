@@ -57,11 +57,14 @@ private:
 	Expression *parseGroupedExpression();
 	Expression *parseIfExpression();
 	Expression *parseCallExpression(Expression *function);
+	Expression *parseIndexExpression(Expression *array);
 
 	Expression *parseIdentifier();
 	Expression *parseIntegerLiteral();
 	Expression *parseBooleanLiteral();
+	Expression *parseStringLiteral();
 	Expression *parseFunctionLiteral();
+	Expression *parseArrayLiteral();
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);

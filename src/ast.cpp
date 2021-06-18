@@ -114,3 +114,22 @@ std::string CallExpression::getStringRepr()
 
 	return res;
 }
+
+std::string ArrayLiteral::getStringRepr()
+{
+	std::string res = "[";
+	for (auto elem : elements)
+		res += elem->getStringRepr() + ", ";
+
+	res.pop_back();
+	res.pop_back();
+
+	res.push_back(']');
+
+	return res;
+}
+
+std::string IndexExpression::getStringRepr()
+{
+	return "(" + array->getStringRepr() + "[" + index->getStringRepr() + "])";
+}

@@ -6,11 +6,10 @@
 #include "./object.hpp"
 
 class Environment {
-private:
+public:
 	std::unordered_map<std::string, Object*> store;
 	Environment *outer;
-
-public:
+	
 	Environment* New();
 	Environment* NewEnclosed();
 	Object* Get(std::string name);

@@ -16,10 +16,16 @@ private:
 
 	Object *evalInfixExpression(std::string operand, Object *left, Object *right);
 	Object *evalIntegerInfixExpression(std::string operand, Object *left, Object *right);
+	Object *evalStringInfixExpression(std::string operand, Object *left, Object *right);
 
 	Object *evalIfExpression(IfExpression *ifExpr, Environment *env);
 	Object *evalIdentifier(Identifier *ident, Environment *env);
 	Object *evalCallExpression(Object *fn, std::vector<Object *> &args);
+
+	Object *evalIndexExpression(Object *array, Object *index, Environment *env);
+	Object *evalArrayIndexExpression(Array *array, Integer *index);
+	Object *evalStringIndexExpression(String *array, Integer *index);
+
 	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 
 public:
