@@ -97,6 +97,35 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "Identifier")
 		return evalIdentifier((Identifier *)node, env);
 
+	else if (nodeType == "FunctionLiteral")
+	{
+		Object *fn = new Function(((FunctionLiteral *)node)->parameters, ((FunctionLiteral *)node)->body, env);
+
+		return fn;
+	}
+
+	else if (nodeType == "CallExpression")
+	{
+		Object *fn = Eval(((CallExpression *)node)->function, env);
+
+		if (isError(fn))
+			return fn;
+
+		std::vector<Object *> args;
+
+		for (auto *argument : ((CallExpression *)node)->arguments)
+		{
+			Object *arg = Eval(argument, env);
+
+			if (isError(arg))
+				return arg;
+
+			args.push_back(arg);
+		}
+
+		return evalCallExpression(fn, args);
+	}
+
 	return __NULL;
 }
 
@@ -262,4 +291,34 @@ Object *Evaluator::evalIdentifier(Identifier *ident, Environment *env)
 {
 	Object *obj = env->Get(ident->value);
 	return obj;
+}
+
+Object *Evaluator::evalCallExpression(Object *fn, std::vector<Object *> &args)
+{
+	if (fn->type() != FUNCTION_OBJ)
+		return new Error("not a function: " + fn->type());
+
+	if (((Function *)fn)->parameters.size() != args.size())
+		return new Error(
+			"argument length(" + std::to_string(args.size()) +
+			") not equal to parameter length (" + std::to_string(((Function *)fn)->parameters.size()) + ")");
+
+	Environment *extendedEnv = extendFunctionEnv((Function *)fn, args, ((Function *)fn)->env);
+
+	Object *evaluated = Eval(((Function *)fn)->body, extendedEnv);
+
+	if (evaluated->type() == RETURN_VALUE_OBJ)
+		return ((ReturnValue *)evaluated)->value;
+
+	return evaluated;
+}
+
+Environment *Evaluator::extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer)
+{
+	Environment *env = outer->NewEnclosed();
+
+	for (int i = 0; i < args.size(); i++)
+		env->Set(fn->parameters[i]->value, args[i]);
+
+	return env;
 }

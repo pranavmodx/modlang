@@ -19,6 +19,8 @@ private:
 
 	Object *evalIfExpression(IfExpression *ifExpr, Environment *env);
 	Object *evalIdentifier(Identifier *ident, Environment *env);
+	Object *evalCallExpression(Object *fn, std::vector<Object *> &args);
+	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 
 public:
 	Object *Eval(Node *node, Environment *env);

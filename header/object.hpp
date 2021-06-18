@@ -9,6 +9,7 @@ const ObjectType BOOLEAN_OBJ = "BOOLEAN";
 const ObjectType NULL_OBJ = "NULL";
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
 const ObjectType ERROR_OBJ = "ERROR";
+const ObjectType FUNCTION_OBJ = "FUNCTION";
 
 class Object
 {
@@ -62,6 +63,41 @@ public:
 	Error(std::string msg) : Object(), message(msg) {}
 	ObjectType type() { return ERROR_OBJ; }
 	std::string inspect() { return "ERROR: " + message; }
+};
+
+class Environment;
+
+class Function : public Object
+{
+public:
+	std::vector<Identifier *> parameters;
+	BlockStatement *body;
+	Environment *env;
+
+	Function(std::vector<Identifier *> &params, BlockStatement *b, Environment *e) : Object(), parameters(params), body(b), env(e) {}
+
+	~Function()
+	{
+		for (auto param : parameters)
+			delete param;
+
+		delete body;
+	}
+
+	ObjectType type() { return FUNCTION_OBJ; }
+
+	std::string inspect()
+	{
+		std::string res = "def (";
+		for (auto ident : parameters)
+			res += ident->getStringRepr() + ", ";
+
+		res.pop_back();
+		res.pop_back();
+		res += ")" + std::string("{\n") + body->getStringRepr() + std::string("\n}");
+
+		return res;
+	}
 };
 
 extern Null *__NULL;

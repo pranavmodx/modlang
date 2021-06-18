@@ -6,13 +6,27 @@ Environment *Environment::New()
 	return env;
 }
 
+Environment *Environment::NewEnclosed()
+{
+	Environment* inner = new Environment();
+    inner->outer = this;
+
+    return inner;
+}
+
 Object *Environment::Get(std::string name)
 {
-	if (store.find(name) != store.end())
-		return store[name];
+	if (store.find(name) == store.end())
+	{
+		if (outer != nullptr)
+		{
+			Object *obj = outer->Get(name);
+			return obj;
+		}
 
-	Error *error = new Error("identifier not found: " + name);
-	return error;
+		return new Error("identifier not found: " + name);
+	}
+	return store[name];
 }
 
 Object *Environment::Set(std::string name, Object *val)
