@@ -165,6 +165,9 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		return evalIndexExpression(array, index, env);
 	}
 
+	else if (nodeType == "HashLiteral")
+		return evalHashLiteral((HashLiteral *)node, env);
+
 	return __NULL;
 }
 
@@ -380,16 +383,19 @@ Environment *Evaluator::extendFunctionEnv(Function *fn, std::vector<Object *> &a
 	return env;
 }
 
-Object *Evaluator::evalIndexExpression(Object *array, Object *index, Environment *env)
+Object *Evaluator::evalIndexExpression(Object *left, Object *index, Environment *env)
 {
-	if (array->type() == ARRAY_OBJ && index->type() == INTEGER_OBJ)
-		return evalArrayIndexExpression((Array *)array, (Integer *)index);
+	if (left->type() == STRING_OBJ && index->type() == INTEGER_OBJ)
+		return evalStringIndexExpression((String *)left, (Integer *)index);
 
-	if (array->type() == STRING_OBJ && index->type() == INTEGER_OBJ)
-		return evalStringIndexExpression((String *)array, (Integer *)index);
+	else if (left->type() == ARRAY_OBJ && index->type() == INTEGER_OBJ)
+		return evalArrayIndexExpression((Array *)left, (Integer *)index);
+
+	else if (left->type() == HASH_OBJ)
+		return evalHashIndexExpression((HashMap *)left, index);
 
 	else
-		return new Error("index operator not supported: " + array->type());
+		return new Error("index operator not supported: " + left->type());
 }
 
 Object *Evaluator::evalArrayIndexExpression(Array *array, Integer *index)
@@ -407,10 +413,10 @@ Object *Evaluator::evalArrayIndexExpression(Array *array, Integer *index)
 	}
 }
 
-Object *Evaluator::evalStringIndexExpression(String *array, Integer *index)
+Object *Evaluator::evalStringIndexExpression(String *string, Integer *index)
 {
 	int i = index->value;
-	auto arr = array->value;
+	auto arr = string->value;
 
 	try
 	{
@@ -420,4 +426,45 @@ Object *Evaluator::evalStringIndexExpression(String *array, Integer *index)
 	{
 		return new Error("index " + index->inspect() + " out of range");
 	}
+}
+
+Object *Evaluator::evalHashLiteral(HashLiteral *hashLiteral, Environment *env)
+{
+	HashMap *hashMap = new HashMap();
+
+	for (auto pair : hashLiteral->pairs)
+	{
+		Object *key = Eval(pair.key, env);
+
+		if (isError(key))
+			return key;
+
+		// if (Hashable.find(key->type()) == Hashable.end())
+		// 	return new Error("unusable as hash key : " + key->type());
+
+		Object *value = Eval(pair.value, env);
+
+		if (isError(value))
+			return value;
+
+		HashKey hashKey(key->type(), key->inspect());
+		HashPairObj hashPairObj(key, value);
+
+		hashMap->pairs[hashKey] = hashPairObj;
+	}
+
+	return hashMap;
+}
+
+Object *Evaluator::evalHashIndexExpression(HashMap *hashMap, Object *index)
+{
+	// if (Hashable.find(index) == Hashable.end())
+	// 	return new Error("unusable as hash key : ", index->type());
+
+	HashKey hashKey(index->type(), index->inspect());
+
+	if (hashMap->pairs.find(hashKey) != hashMap->pairs.end())
+		return hashMap->pairs[hashKey].value;
+
+	return __NULL;
 }

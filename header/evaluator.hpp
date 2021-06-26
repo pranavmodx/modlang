@@ -22,9 +22,12 @@ private:
 	Object *evalIdentifier(Identifier *ident, Environment *env);
 	Object *evalCallExpression(Object *fn, std::vector<Object *> &args);
 
-	Object *evalIndexExpression(Object *array, Object *index, Environment *env);
+	Object *evalIndexExpression(Object *left, Object *index, Environment *env);
+	Object *evalStringIndexExpression(String *string, Integer *index);
 	Object *evalArrayIndexExpression(Array *array, Integer *index);
-	Object *evalStringIndexExpression(String *array, Integer *index);
+	Object *evalHashIndexExpression(HashMap *hashMap, Object *index);
+
+	Object *evalHashLiteral(HashLiteral *hashLiteral, Environment *env);
 
 	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 

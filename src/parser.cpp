@@ -41,12 +41,13 @@ void Parser::New(Lexer &lexer)
 
 	prefixParseFns[STRING] = &Parser::parseStringLiteral;
 
-	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
-
 	prefixParseFns[IF] = &Parser::parseIfExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
 
+	// brackets
+	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
 	prefixParseFns[LBRACKET] = &Parser::parseArrayLiteral;
+	prefixParseFns[LBRACE] = &Parser::parseHashLiteral;
 
 	// infix parse functions
 	infixParseFns[PLUS] = &Parser::parseInfixExpression;
@@ -61,8 +62,8 @@ void Parser::New(Lexer &lexer)
 	infixParseFns[LT] = &Parser::parseInfixExpression;
 	infixParseFns[GT] = &Parser::parseInfixExpression;
 
+	// brackets
 	infixParseFns[LPAREN] = &Parser::parseCallExpression;
-
 	infixParseFns[LBRACKET] = &Parser::parseIndexExpression;
 }
 
@@ -490,7 +491,8 @@ Expression *Parser::parseArrayLiteral()
 	exp->elements = parseExpressionList();
 
 	if (!expectPeek(RBRACKET))
-		exp->elements = std::vector<Expression *>();
+		//exp->elements = std::vector<Expression *>();
+		return nullptr;
 
 	return exp;
 }
@@ -506,6 +508,35 @@ Expression *Parser::parseIndexExpression(Expression *array)
 	exp->index = parseExpression(LOWEST);
 
 	if (!expectPeek(RBRACKET))
+		return nullptr;
+
+	return exp;
+}
+
+Expression *Parser::parseHashLiteral() {
+	HashLiteral *exp = new HashLiteral();
+	exp->token = curToken;
+
+	while (peekToken.type != RBRACE) {
+		nextToken();
+
+		Expression *key = parseExpression(LOWEST);
+
+		if (!expectPeek(COLON))
+			return nullptr;
+		
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		exp->pairs.push_back({key, value});
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE))
+		// exp->pairs = std::vector<std::pair<Expression*, Expression*>(); 
 		return nullptr;
 
 	return exp;

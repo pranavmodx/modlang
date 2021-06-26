@@ -118,11 +118,15 @@ std::string CallExpression::getStringRepr()
 std::string ArrayLiteral::getStringRepr()
 {
 	std::string res = "[";
+
 	for (auto elem : elements)
 		res += elem->getStringRepr() + ", ";
 
-	res.pop_back();
-	res.pop_back();
+	if (res.length() != 1)
+	{
+		res.pop_back();
+		res.pop_back();
+	}
 
 	res.push_back(']');
 
@@ -132,4 +136,22 @@ std::string ArrayLiteral::getStringRepr()
 std::string IndexExpression::getStringRepr()
 {
 	return "(" + array->getStringRepr() + "[" + index->getStringRepr() + "])";
+}
+
+std::string HashLiteral::getStringRepr()
+{
+	std::string res = "{";
+
+	for (auto pair : pairs)
+		res += pair.key->getStringRepr() + " : " + pair.value->getStringRepr() + ", ";
+
+	if (res.length() != 1)
+	{
+		res.pop_back();
+		res.pop_back();
+	}
+
+	res.push_back('}');
+
+	return res;
 }

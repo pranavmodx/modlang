@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+#include <unordered_set>
+
 #include "ast.hpp"
 
 typedef std::string ObjectType;
@@ -10,15 +13,32 @@ const ObjectType STRING_OBJ = "STRING";
 const ObjectType NULL_OBJ = "NULL";
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
 const ObjectType ERROR_OBJ = "ERROR";
+const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType FUNCTION_OBJ = "FUNCTION";
 const ObjectType ARRAY_OBJ = "ARRAY";
-const ObjectType BUILTIN_OBJ = "BUILTIN";
+const ObjectType HASH_OBJ = "HASH";
 
 class Object
 {
 public:
 	virtual ObjectType type() = 0;
 	virtual std::string inspect() = 0;
+};
+
+// std::unordered_set<ObjectType> Hashable{INTEGER_OBJ, BOOLEAN_OBJ,STRING_OBJ};
+
+struct HashKey
+{
+	ObjectType type;
+	std::string value;
+
+	HashKey() {}
+	HashKey(ObjectType type, std::string value) : type{type}, value{value} {}
+
+	bool operator==(const HashKey &otherKey) const
+	{
+		return otherKey.type == type && otherKey.value == value;
+	}
 };
 
 class Integer : public Object
@@ -78,6 +98,16 @@ public:
 	std::string inspect() { return "ERROR: " + message; }
 };
 
+class Builtin : public Object
+{
+public:
+	Object *(*function)(std::vector<Object *> &);
+
+	Builtin(Object *(*fn)(std::vector<Object *> &)) : Object(), function(fn) {}
+	ObjectType type() { return BUILTIN_OBJ; }
+	std::string inspect() { return "Builtin Function"; }
+};
+
 class Environment;
 
 class Function : public Object
@@ -117,6 +147,8 @@ public:
 class Array : public Object
 {
 public:
+	std::vector<Object *> elements;
+
 	Array(std::vector<Object *> &elems) : Object(), elements(elems) {}
 
 	ObjectType type() { return ARRAY_OBJ; }
@@ -124,9 +156,10 @@ public:
 	std::string inspect()
 	{
 		std::string res = "[";
+
 		for (auto elem : elements)
 			res += elem->inspect() + ", ";
-	
+
 		res.pop_back();
 		res.pop_back();
 
@@ -134,18 +167,52 @@ public:
 
 		return res;
 	}
-
-	std::vector<Object *> elements;
 };
 
-class Builtin : public Object
+class HashPairObj
+{ // we could use std::pair but this is more explicit
+public:
+	Object *key;
+	Object *value;
+
+	HashPairObj() {}
+	HashPairObj(Object *key, Object *value) : key{key}, value{value} {}
+};
+
+struct HashFn
+{
+	size_t operator()(const HashKey &hashKey) const
+	{
+		return 
+			std::hash<std::string>()(hashKey.type) ^ 
+			std::hash<std::string>()(hashKey.value);
+	}
+};
+
+class HashMap : public Object
 {
 public:
-	Object *(*function)(std::vector<Object *> &);
+	std::unordered_map<HashKey, HashPairObj, HashFn> pairs;
 
-	Builtin(Object *(*fn)(std::vector<Object *> &)) : Object(), function(fn) {}
-	ObjectType type() { return BUILTIN_OBJ; }
-	std::string inspect() { return "Builtin Function"; }
+	ObjectType type() { return HASH_OBJ; }
+
+	std::string inspect()
+	{
+		std::string res = "{";
+
+		for (auto pair : pairs)
+			res += pair.second.key->inspect() + " : " + pair.second.value->inspect() + ", ";
+
+		if (res.length() != 1)
+		{
+			res.pop_back();
+			res.pop_back();
+		}
+
+		res.push_back('}');
+
+		return res;
+	}
 };
 
 extern Null *__NULL;

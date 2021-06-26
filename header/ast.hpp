@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 
 #include "token.hpp"
 
@@ -239,7 +240,6 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "ArrayLiteral"; }
-
 };
 
 class IndexExpression : public Expression
@@ -254,4 +254,22 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "IndexExpression"; }
+};
+
+struct HashPair {
+	Expression *key;
+	Expression *value;
+};
+
+class HashLiteral : public Expression
+{
+public:
+	Token token;
+	std::vector<HashPair> pairs;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "HashLiteral"; }
 };
