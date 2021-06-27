@@ -63,7 +63,7 @@ object.o: src/object.cpp header/object.hpp
 environment.o: src/environment.cpp header/environment.hpp
 	g++ -std=c++17 -c src/environment.cpp
 
-evaluator.o: src/evaluator.cpp header/evaluator.hpp
+evaluator.o: src/evaluator.cpp header/evaluator.hpp header/builtin.hpp
 	g++ -std=c++17 -c src/evaluator.cpp
 
 

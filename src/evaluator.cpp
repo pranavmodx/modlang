@@ -1,4 +1,5 @@
 #include "../header/evaluator.hpp"
+#include "../header/builtin.hpp"
 
 bool isError(Object *obj)
 {
@@ -350,13 +351,21 @@ Object *Evaluator::evalIfExpression(IfExpression *ifExpr, Environment *env)
 Object *Evaluator::evalIdentifier(Identifier *ident, Environment *env)
 {
 	Object *obj = env->Get(ident->value);
+
+	if (obj->type() == ERROR_OBJ &&
+		builtin.find(ident->value) != builtin.end())
+		return builtin[ident->value];
+
 	return obj;
 }
 
 Object *Evaluator::evalCallExpression(Object *fn, std::vector<Object *> &args)
 {
-	if (fn->type() != FUNCTION_OBJ)
+	if (fn->type() != FUNCTION_OBJ && fn->type() != BUILTIN_OBJ)
 		return new Error("not a function: " + fn->type());
+
+	if (fn->type() == BUILTIN_OBJ)
+      return ((Builtin *)fn)->function(args);
 
 	if (((Function *)fn)->parameters.size() != args.size())
 		return new Error(

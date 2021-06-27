@@ -160,8 +160,11 @@ public:
 		for (auto elem : elements)
 			res += elem->inspect() + ", ";
 
-		res.pop_back();
-		res.pop_back();
+		if (res.size() != 1)
+		{
+			res.pop_back();
+			res.pop_back();
+		}
 
 		res.push_back(']');
 
@@ -183,9 +186,8 @@ struct HashFn
 {
 	size_t operator()(const HashKey &hashKey) const
 	{
-		return 
-			std::hash<std::string>()(hashKey.type) ^ 
-			std::hash<std::string>()(hashKey.value);
+		return std::hash<std::string>()(hashKey.type) ^
+			   std::hash<std::string>()(hashKey.value);
 	}
 };
 
