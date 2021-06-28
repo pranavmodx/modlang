@@ -256,20 +256,32 @@ public:
 	std::string nodeType() { return "IndexExpression"; }
 };
 
-struct HashPair {
+struct HashMapPair {
 	Expression *key;
 	Expression *value;
 };
 
-class HashLiteral : public Expression
+class HashMapLiteral : public Expression
 {
 public:
 	Token token;
-	std::vector<HashPair> pairs;
+	std::vector<HashMapPair> pairs;
 
 	void expressionNode() {}
 
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
-	std::string nodeType() { return "HashLiteral"; }
+	std::string nodeType() { return "HashMapLiteral"; }
+};
+
+class HashSetLiteral : public Expression {
+public:
+	Token token;
+	std::vector<Expression*> pairs;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "HashSetLiteral"; }
 };

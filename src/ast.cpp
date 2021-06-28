@@ -138,12 +138,30 @@ std::string IndexExpression::getStringRepr()
 	return "(" + array->getStringRepr() + "[" + index->getStringRepr() + "])";
 }
 
-std::string HashLiteral::getStringRepr()
+std::string HashMapLiteral::getStringRepr()
 {
 	std::string res = "{";
 
 	for (auto pair : pairs)
 		res += pair.key->getStringRepr() + " : " + pair.value->getStringRepr() + ", ";
+
+	if (res.length() != 1)
+	{
+		res.pop_back();
+		res.pop_back();
+	}
+
+	res.push_back('}');
+
+	return res;
+}
+
+std::string HashSetLiteral::getStringRepr()
+{
+	std::string res = "{";
+
+	for (auto pair : pairs)
+		res += pair->getStringRepr() + ", ";
 
 	if (res.length() != 1)
 	{

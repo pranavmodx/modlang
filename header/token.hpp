@@ -64,6 +64,7 @@ const TokenType FALSE = "FALSE";
 const TokenType IF = "IF";
 const TokenType ELSE = "ELSE";
 const TokenType RETURN = "RETURN";
+const TokenType HASHSET = "HASHSET";
 
 extern std::unordered_map<std::string, TokenType> keywords;
 

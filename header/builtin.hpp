@@ -4,7 +4,7 @@
 
 #include "./object.hpp"
 
-Object *print(std::vector<Object *> &objs)
+Object *Print(std::vector<Object *> &objs)
 {
 	for (auto obj : objs)
 	{
@@ -19,7 +19,7 @@ Object *print(std::vector<Object *> &objs)
 	return __NULL;
 }
 
-Object *len(std::vector<Object *> &objs)
+Object *Len(std::vector<Object *> &objs)
 {
 	if (objs.size() == 0)
 		return __NULL;
@@ -41,7 +41,7 @@ Object *len(std::vector<Object *> &objs)
 	return __NULL;
 }
 
-Object *push(std::vector<Object *> &objs)
+Object *Push(std::vector<Object *> &objs)
 {
 	if (objs.size() < 2)
 		return __NULL;
@@ -53,15 +53,15 @@ Object *push(std::vector<Object *> &objs)
 		return obj;
 
 	else if (type == STRING_OBJ)
-		((String *)obj)->value.push_back(objs[1]);
+		((String *)obj)->value += ((String *)objs[1])->value;
 
 	else if (type == ARRAY_OBJ)
-		((Array *)obj)->elements.push_back(objs[1]);
+		((Array *)obj)->elements.push_back(((Integer *)objs[1]));
 
 	return __NULL;
 }
 
-Object *pop(std::vector<Object *> &objs)
+Object *Pop(std::vector<Object *> &objs)
 {
 	if (objs.size() == 0)
 		return __NULL;
@@ -73,16 +73,56 @@ Object *pop(std::vector<Object *> &objs)
 		return obj;
 
 	else if (type == STRING_OBJ)
-		(String *)obj->value.pop_back();
+		((String *)obj)->value.pop_back();
 
 	else if (type == ARRAY_OBJ)
-		(Array *)obj->elements.pop_back();
+		((Array *)obj)->elements.pop_back();
+
+	return __NULL;
+}
+
+Object *Insert(std::vector<Object *> &objs)
+{
+	if (objs.size() == 0)
+		return __NULL;
+
+	Object *obj = objs[0];
+	ObjectType type = obj->type();
+
+	if (type == ERROR_OBJ)
+		return obj;
+
+	else if (type == HASHSET_OBJ) {
+		HashKey hashKey (objs[1]->type(), objs[1]->inspect());
+		((HashSet *)obj)->pairs.insert({hashKey, objs[1]});
+	}
+
+	return __NULL;
+}
+
+Object *Remove(std::vector<Object *> &objs)
+{
+	if (objs.size() == 0)
+		return __NULL;
+
+	Object *obj = objs[0];
+	ObjectType type = obj->type();
+
+	if (type == ERROR_OBJ)
+		return obj;
+
+	else if (type == HASHSET_OBJ) {
+		HashKey hashKey (objs[1]->type(), objs[1]->inspect());
+		((HashSet *)obj)->pairs.erase(hashKey);
+	}
 
 	return __NULL;
 }
 
 std::unordered_map<std::string, Builtin *> builtin{
-	{"print", new Builtin(*print)},
-	{"len", new Builtin(*len)},
-	{"push", new Builtin(*push)},
-	{"pop", new Builtin(*pop)}};
+	{"print", new Builtin(*Print)},
+	{"len", new Builtin(*Len)},
+	{"push", new Builtin(*Push)},
+	{"pop", new Builtin(*Pop)},
+	{"insert", new Builtin(*Insert)},
+	{"remove", new Builtin(*Remove)},};

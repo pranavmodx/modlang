@@ -25,9 +25,10 @@ private:
 	Object *evalIndexExpression(Object *left, Object *index, Environment *env);
 	Object *evalStringIndexExpression(String *string, Integer *index);
 	Object *evalArrayIndexExpression(Array *array, Integer *index);
-	Object *evalHashIndexExpression(HashMap *hashMap, Object *index);
+	Object *evalHashMapIndexExpression(HashMap *hashMap, Object *index);
 
-	Object *evalHashLiteral(HashLiteral *hashLiteral, Environment *env);
+	Object *evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environment *env);
+	Object *evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environment *env);
 
 	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 

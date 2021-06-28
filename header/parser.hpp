@@ -65,7 +65,8 @@ private:
 	Expression *parseStringLiteral();
 	Expression *parseFunctionLiteral();
 	Expression *parseArrayLiteral();
-	Expression *parseHashLiteral();
+	Expression *parseHashMapLiteral();
+	Expression *parseHashSetLiteral();
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);

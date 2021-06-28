@@ -166,8 +166,11 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		return evalIndexExpression(array, index, env);
 	}
 
-	else if (nodeType == "HashLiteral")
-		return evalHashLiteral((HashLiteral *)node, env);
+	else if (nodeType == "HashMapLiteral")
+		return evalHashMapLiteral((HashMapLiteral *)node, env);
+
+	else if (nodeType == "HashSetLiteral")
+		return evalHashSetLiteral((HashSetLiteral *)node, env);
 
 	return __NULL;
 }
@@ -400,8 +403,8 @@ Object *Evaluator::evalIndexExpression(Object *left, Object *index, Environment 
 	else if (left->type() == ARRAY_OBJ && index->type() == INTEGER_OBJ)
 		return evalArrayIndexExpression((Array *)left, (Integer *)index);
 
-	else if (left->type() == HASH_OBJ)
-		return evalHashIndexExpression((HashMap *)left, index);
+	else if (left->type() == HASHMAP_OBJ)
+		return evalHashMapIndexExpression((HashMap *)left, index);
 
 	else
 		return new Error("index operator not supported: " + left->type());
@@ -437,11 +440,11 @@ Object *Evaluator::evalStringIndexExpression(String *string, Integer *index)
 	}
 }
 
-Object *Evaluator::evalHashLiteral(HashLiteral *hashLiteral, Environment *env)
+Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environment *env)
 {
 	HashMap *hashMap = new HashMap();
 
-	for (auto pair : hashLiteral->pairs)
+	for (auto pair : hashMapLiteral->pairs)
 	{
 		Object *key = Eval(pair.key, env);
 
@@ -457,15 +460,15 @@ Object *Evaluator::evalHashLiteral(HashLiteral *hashLiteral, Environment *env)
 			return value;
 
 		HashKey hashKey(key->type(), key->inspect());
-		HashPairObj hashPairObj(key, value);
+		HashMapPairObj hashMapPairObj(key, value);
 
-		hashMap->pairs[hashKey] = hashPairObj;
+		hashMap->pairs[hashKey] = hashMapPairObj;
 	}
 
 	return hashMap;
 }
 
-Object *Evaluator::evalHashIndexExpression(HashMap *hashMap, Object *index)
+Object *Evaluator::evalHashMapIndexExpression(HashMap *hashMap, Object *index)
 {
 	// if (Hashable.find(index) == Hashable.end())
 	// 	return new Error("unusable as hash key : ", index->type());
@@ -476,4 +479,22 @@ Object *Evaluator::evalHashIndexExpression(HashMap *hashMap, Object *index)
 		return hashMap->pairs[hashKey].value;
 
 	return __NULL;
+}
+
+Object *Evaluator::evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environment *env)
+{
+	HashSet *hashSet = new HashSet();
+
+	for (auto pair : hashSetLiteral->pairs)
+	{
+		Object *key = Eval(pair, env);
+
+		if (isError(key))
+			return key;
+
+		HashKey hashKey(key->type(), key->inspect());
+		hashSet->pairs[hashKey] = key;
+	}
+
+	return hashSet;
 }

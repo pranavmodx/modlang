@@ -8,6 +8,7 @@ std::unordered_map<std::string, TokenType> keywords = {
     {"if", IF},
     {"else", ELSE},
     {"return", RETURN},
+    {"hashset", HASHSET},
 };
 
 TokenType LookupIdentifier(std::string ident)

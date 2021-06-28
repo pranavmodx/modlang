@@ -16,7 +16,8 @@ const ObjectType ERROR_OBJ = "ERROR";
 const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType FUNCTION_OBJ = "FUNCTION";
 const ObjectType ARRAY_OBJ = "ARRAY";
-const ObjectType HASH_OBJ = "HASH";
+const ObjectType HASHMAP_OBJ = "HASHMAP";
+const ObjectType HASHSET_OBJ = "HASHSET";
 
 class Object
 {
@@ -172,14 +173,14 @@ public:
 	}
 };
 
-class HashPairObj
+class HashMapPairObj
 { // we could use std::pair but this is more explicit
 public:
 	Object *key;
 	Object *value;
 
-	HashPairObj() {}
-	HashPairObj(Object *key, Object *value) : key{key}, value{value} {}
+	HashMapPairObj() {}
+	HashMapPairObj(Object *key, Object *value) : key{key}, value{value} {}
 };
 
 struct HashFn
@@ -194,9 +195,9 @@ struct HashFn
 class HashMap : public Object
 {
 public:
-	std::unordered_map<HashKey, HashPairObj, HashFn> pairs;
+	std::unordered_map<HashKey, HashMapPairObj, HashFn> pairs;
 
-	ObjectType type() { return HASH_OBJ; }
+	ObjectType type() { return HASHMAP_OBJ; }
 
 	std::string inspect()
 	{
@@ -204,6 +205,32 @@ public:
 
 		for (auto pair : pairs)
 			res += pair.second.key->inspect() + " : " + pair.second.value->inspect() + ", ";
+
+		if (res.length() != 1)
+		{
+			res.pop_back();
+			res.pop_back();
+		}
+
+		res.push_back('}');
+
+		return res;
+	}
+};
+
+class HashSet : public Object
+{
+public:
+	std::unordered_map<HashKey, Object*, HashFn> pairs;
+
+	ObjectType type() { return HASHSET_OBJ; }
+
+	std::string inspect()
+	{
+		std::string res = "{";
+
+		for (auto pair : pairs)
+			res += pair.second->inspect() + ", ";
 
 		if (res.length() != 1)
 		{

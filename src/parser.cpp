@@ -43,11 +43,12 @@ void Parser::New(Lexer &lexer)
 
 	prefixParseFns[IF] = &Parser::parseIfExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
+	prefixParseFns[HASHSET] = &Parser::parseHashSetLiteral;
 
 	// brackets
 	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
 	prefixParseFns[LBRACKET] = &Parser::parseArrayLiteral;
-	prefixParseFns[LBRACE] = &Parser::parseHashLiteral;
+	prefixParseFns[LBRACE] = &Parser::parseHashMapLiteral;
 
 	// infix parse functions
 	infixParseFns[PLUS] = &Parser::parseInfixExpression;
@@ -513,8 +514,8 @@ Expression *Parser::parseIndexExpression(Expression *array)
 	return exp;
 }
 
-Expression *Parser::parseHashLiteral() {
-	HashLiteral *exp = new HashLiteral();
+Expression *Parser::parseHashMapLiteral() {
+	HashMapLiteral *exp = new HashMapLiteral();
 	exp->token = curToken;
 
 	while (peekToken.type != RBRACE) {
@@ -537,6 +538,36 @@ Expression *Parser::parseHashLiteral() {
 
 	if (!expectPeek(RBRACE))
 		// exp->pairs = std::vector<std::pair<Expression*, Expression*>(); 
+		return nullptr;
+
+	return exp;
+}
+
+Expression *Parser::parseHashSetLiteral() {
+	HashSetLiteral *exp = new HashSetLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT))
+		return nullptr;
+
+	if (!expectPeek(GT))
+		return nullptr;
+	
+	if (!expectPeek(LBRACE))
+		return nullptr;
+
+	while (peekToken.type != RBRACE) {
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		exp->pairs.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE))
 		return nullptr;
 
 	return exp;
