@@ -57,12 +57,13 @@ const TokenType LBRACKET = "[";
 const TokenType RBRACKET = "]";
 
 // keywords
-const TokenType FUNCTION = "FUNCTION";
-const TokenType LET = "LET";
 const TokenType TRUE = "TRUE";
 const TokenType FALSE = "FALSE";
+const TokenType LET = "LET";
 const TokenType IF = "IF";
 const TokenType ELSE = "ELSE";
+const TokenType WHILE = "WHILE";
+const TokenType FUNCTION = "FUNCTION";
 const TokenType RETURN = "RETURN";
 const TokenType HASHSET = "HASHSET";
 

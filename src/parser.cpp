@@ -42,6 +42,7 @@ void Parser::New(Lexer &lexer)
 	prefixParseFns[STRING] = &Parser::parseStringLiteral;
 
 	prefixParseFns[IF] = &Parser::parseIfExpression;
+	prefixParseFns[WHILE]  = &Parser::parseWhileExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
 	prefixParseFns[HASHSET] = &Parser::parseHashSetLiteral;
 
@@ -168,7 +169,7 @@ void Parser::resetErrors()
 
 void Parser::peekError(const TokenType &tokenType)
 {
-	std::string msg = "error: expected token to be -> " + tokenType + " got -> " + peekToken.type + " instead";
+	std::string msg = "error: expected token to be " + tokenType + " got " + peekToken.type + " instead";
 
 	errors.push_back(msg);
 }
@@ -366,6 +367,29 @@ Expression *Parser::parseIfExpression()
 	return exp;
 }
 
+Expression *Parser::parseWhileExpression()
+{
+	WhileExpression *exp = new WhileExpression();
+	exp->token = curToken;
+
+	if (!expectPeek(LPAREN))
+		return nullptr;
+
+	nextToken();
+
+	exp->condition = parseExpression(LOWEST);
+
+	if (!expectPeek(RPAREN))
+		return nullptr;
+
+	if (!expectPeek(LBRACE))
+		return nullptr;
+
+	exp->consequence = parseBlockStatement();
+
+	return exp;
+}
+
 BlockStatement *Parser::parseBlockStatement()
 {
 	BlockStatement *block = new BlockStatement();
@@ -513,18 +537,20 @@ Expression *Parser::parseIndexExpression(Expression *array)
 	return exp;
 }
 
-Expression *Parser::parseHashMapLiteral() {
+Expression *Parser::parseHashMapLiteral()
+{
 	HashMapLiteral *exp = new HashMapLiteral();
 	exp->token = curToken;
 
-	while (peekToken.type != RBRACE) {
+	while (peekToken.type != RBRACE)
+	{
 		nextToken();
 
 		Expression *key = parseExpression(LOWEST);
 
 		if (!expectPeek(COLON))
 			return nullptr;
-		
+
 		nextToken();
 
 		Expression *value = parseExpression(LOWEST);
@@ -536,13 +562,14 @@ Expression *Parser::parseHashMapLiteral() {
 	}
 
 	if (!expectPeek(RBRACE))
-		// exp->pairs = std::vector<std::pair<Expression*, Expression*>(); 
+		// exp->pairs = std::vector<std::pair<Expression*, Expression*>();
 		return nullptr;
 
 	return exp;
 }
 
-Expression *Parser::parseHashSetLiteral() {
+Expression *Parser::parseHashSetLiteral()
+{
 	HashSetLiteral *exp = new HashSetLiteral();
 	exp->token = curToken;
 
@@ -551,11 +578,12 @@ Expression *Parser::parseHashSetLiteral() {
 
 	if (!expectPeek(GT))
 		return nullptr;
-	
+
 	if (!expectPeek(LBRACE))
 		return nullptr;
 
-	while (peekToken.type != RBRACE) {
+	while (peekToken.type != RBRACE)
+	{
 		nextToken();
 
 		Expression *value = parseExpression(LOWEST);

@@ -196,6 +196,20 @@ public:
 	std::string nodeType() { return "IfExpression"; }
 };
 
+class WhileExpression : public Expression
+{
+public:
+	Token token;
+	Expression *condition;
+	BlockStatement *consequence;
+
+	void expressionNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "WhileExpression"; }
+
+};
+
 class FunctionLiteral : public Expression
 {
 public:
@@ -256,7 +270,8 @@ public:
 	std::string nodeType() { return "IndexExpression"; }
 };
 
-struct HashMapPair {
+struct HashMapPair
+{
 	Expression *key;
 	Expression *value;
 };
@@ -274,10 +289,11 @@ public:
 	std::string nodeType() { return "HashMapLiteral"; }
 };
 
-class HashSetLiteral : public Expression {
+class HashSetLiteral : public Expression
+{
 public:
 	Token token;
-	std::vector<Expression*> pairs;
+	std::vector<Expression *> pairs;
 
 	void expressionNode() {}
 

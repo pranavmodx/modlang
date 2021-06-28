@@ -56,6 +56,7 @@ private:
 	Expression *parseInfixExpression(Expression *);
 	Expression *parseGroupedExpression();
 	Expression *parseIfExpression();
+	Expression *parseWhileExpression();
 	Expression *parseCallExpression(Expression *function);
 	Expression *parseIndexExpression(Expression *array);
 

@@ -101,6 +101,26 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "IfExpression")
 		return evalIfExpression((IfExpression *)node, env);
 
+	else if (nodeType == "WhileExpression")
+	{
+		while (true)
+		{
+			Object *condition = Eval(((WhileExpression *)node)->condition, env);
+
+			if (isError(condition))
+				return condition;
+
+			if (!isTruthy(condition))
+				return __NULL;
+
+			Object *result = Eval(((WhileExpression *)node)->consequence, env);
+
+			if (result->type() == ERROR_OBJ ||
+				result->type() == RETURN_VALUE_OBJ)
+				return result;
+		}
+	}
+
 	else if (nodeType == "Identifier")
 	{
 		return evalIdentifier((Identifier *)node, env);
@@ -159,10 +179,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		if (isError(array))
 			return array;
 
-		env->Set(std::to_string((intptr_t)array), array);
-
 		Object *index = Eval(((IndexExpression *)node)->index, env);
-		env->store.erase(std::to_string((intptr_t)array));
 
 		if (isError(index))
 			return index;

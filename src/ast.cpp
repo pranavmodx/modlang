@@ -87,6 +87,13 @@ std::string IfExpression::getStringRepr()
 	return res;
 }
 
+std::string WhileExpression::getStringRepr()
+{
+	std::string res = "while (" + condition->getStringRepr() + " ) {" + consequence->getStringRepr() + " }";
+
+	return res;
+}
+
 std::string FunctionLiteral::getStringRepr()
 {
 	std::string res = tokenLiteral() + "(";

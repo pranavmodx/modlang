@@ -1,12 +1,13 @@
 #include "../header/token.hpp"
 
 std::unordered_map<std::string, TokenType> keywords = {
-    {"let", LET},
-    {"def", FUNCTION},
     {"true", TRUE},
     {"false", FALSE},
+    {"let", LET},
     {"if", IF},
     {"else", ELSE},
+    {"while", WHILE},
+    {"def", FUNCTION},
     {"return", RETURN},
     {"hashset", HASHSET},
 };
