@@ -10,14 +10,15 @@ typedef std::string ObjectType;
 const ObjectType INTEGER_OBJ = "INTEGER";
 const ObjectType BOOLEAN_OBJ = "BOOLEAN";
 const ObjectType STRING_OBJ = "STRING";
-const ObjectType NULL_OBJ = "NULL";
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
-const ObjectType ERROR_OBJ = "ERROR";
 const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType FUNCTION_OBJ = "FUNCTION";
 const ObjectType ARRAY_OBJ = "ARRAY";
 const ObjectType HASHMAP_OBJ = "HASHMAP";
 const ObjectType HASHSET_OBJ = "HASHSET";
+
+const ObjectType NULL_OBJ = "NULL";
+const ObjectType ERROR_OBJ = "ERROR";
 
 class Object
 {
@@ -67,8 +68,18 @@ class String : public Object
 public:
 	std::string value;
 
-	String(std::string s) : Object(), value(s) {}
+	String(std::string s) : Object(), value{s} {}
 	ObjectType type() { return STRING_OBJ; }
+	std::string inspect() { return value; }
+};
+
+class Error : public Object
+{
+public:
+	std::string value;
+
+	Error(std::string s) : Object(), value(s) {}
+	ObjectType type() { return ERROR_OBJ + " "; } // some bug here, don't touch " "!
 	std::string inspect() { return value; }
 };
 
@@ -87,16 +98,6 @@ public:
 	ReturnValue(Object *v) : Object(), value(v) {}
 	ObjectType type() { return RETURN_VALUE_OBJ; }
 	std::string inspect() { return value->inspect(); }
-};
-
-class Error : public Object
-{
-public:
-	std::string message;
-
-	Error(std::string msg) : Object(), message(msg) {}
-	ObjectType type() { return ERROR_OBJ; }
-	std::string inspect() { return "ERROR: " + message; }
 };
 
 class Builtin : public Object

@@ -153,7 +153,7 @@ bool Parser::expectPeek(const TokenType &tokenType)
 
 void Parser::noPrefixParseFnError(TokenType type)
 {
-	errors.push_back("no prefix parse function for " + type);
+	errors.push_back("error: invalid symbol used in statement : " + type);
 }
 
 std::vector<std::string> Parser::Errors()
@@ -168,7 +168,7 @@ void Parser::resetErrors()
 
 void Parser::peekError(const TokenType &tokenType)
 {
-	std::string msg = "expected token to be " + tokenType + ", got " + peekToken.type + " instead";
+	std::string msg = "error: expected token to be -> " + tokenType + " got -> " + peekToken.type + " instead";
 
 	errors.push_back(msg);
 }
@@ -240,12 +240,12 @@ Expression *Parser::parseIntegerLiteral()
 	}
 	catch (const std::invalid_argument e)
 	{
-		errors.push_back("cannot parse " + curToken.literal + " to int");
+		errors.push_back("error: cannot parse " + curToken.literal + " to int");
 		return nullptr;
 	}
 	catch (const std::out_of_range e)
 	{
-		errors.push_back("the integer " + curToken.literal + " is out of range");
+		errors.push_back("error: the integer " + curToken.literal + " is out of range");
 		return nullptr;
 	}
 
@@ -377,9 +377,8 @@ BlockStatement *Parser::parseBlockStatement()
 	{
 		Statement *stmt = parseStatement();
 		if (stmt != nullptr)
-		{
 			block->statements.push_back(stmt);
-		}
+
 		nextToken();
 	}
 

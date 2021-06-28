@@ -24,6 +24,9 @@ void REPL()
 
 		std::getline(std::cin, line);
 
+		if (line.empty())
+			continue;
+
 		lexer.New(line);
 		parser.New(lexer);
 
@@ -32,6 +35,7 @@ void REPL()
 		if (parser.Errors().size())
 			for (std::string error : parser.Errors())
 				std::cout << error << std::endl;
+
 		else {
 			Object *obj = evaluator.Eval(program, env);
 			if (obj != __NULL)

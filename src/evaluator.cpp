@@ -40,6 +40,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "ReturnStatement")
 	{
 		Object *value = Eval(((ReturnStatement *)node)->returnValue, env);
+
 		if (isError(value))
 			return value;
 
@@ -50,6 +51,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "LetStatement")
 	{
 		Object *value = Eval(((LetStatement *)node)->value, env);
+
 		if (isError(value))
 			return value;
 
@@ -100,7 +102,9 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		return evalIfExpression((IfExpression *)node, env);
 
 	else if (nodeType == "Identifier")
+	{
 		return evalIdentifier((Identifier *)node, env);
+	}
 
 	else if (nodeType == "FunctionLiteral")
 	{
@@ -236,7 +240,7 @@ Object *Evaluator::evalMinusPrefixExpression(Object *right)
 		return intObj;
 	}
 
-	Object *error = new Error("unknown operator: -" + right->type());
+	Object *error = new Error("error : unknown operator for " + right->type() + " -> -");
 	return error;
 }
 
@@ -247,7 +251,7 @@ Object *Evaluator::evalPrefixExpression(std::string operand, Object *right)
 	else if (operand == "-")
 		return evalMinusPrefixExpression(right);
 
-	Object *error = new Error("unknown operator: " + operand + right->type());
+	Object *error = new Error("error : unknown operator for " + right->type() + " -> " + operand);
 	return error;
 }
 
@@ -266,7 +270,7 @@ Object *Evaluator::evalInfixExpression(std::string operand, Object *left, Object
 
 	else if (left->type() != right->type())
 	{
-		error = new Error("type mismatch: " + left->type() + " " + operand + " " + right->type());
+		error = new Error("error: type mismatch -> " + left->type() + " " + operand + " " + right->type());
 		return error;
 	}
 
@@ -277,7 +281,7 @@ Object *Evaluator::evalInfixExpression(std::string operand, Object *left, Object
 
 	else
 	{
-		error = new Error("unknown operator: " + left->type() + " " + operand + " " + right->type());
+		error = new Error("error: unknown operator -> " + left->type() + " " + operand + " " + right->type());
 
 		return error;
 	}
@@ -316,7 +320,7 @@ Object *Evaluator::evalIntegerInfixExpression(std::string operand, Object *left,
 
 	else
 	{
-		Object *error = new Error("unknown operator: " + left->type() + " " + operand + " " + right->type());
+		Object *error = new Error("error: unknown operator -> " + left->type() + " " + operand + " " + right->type());
 		return error;
 	}
 
@@ -333,7 +337,7 @@ Object *Evaluator::evalStringInfixExpression(std::string operand, Object *left, 
 	if (operand == "+")
 		res = new String(leftVal + rightVal);
 	else
-		return new Error("unknown operator: " + left->type() + " " + operand + " " + right->type());
+		return new Error("error: unknown operator -> " + left->type() + " " + operand + " " + right->type());
 
 	return res;
 }
@@ -355,7 +359,7 @@ Object *Evaluator::evalIdentifier(Identifier *ident, Environment *env)
 {
 	Object *obj = env->Get(ident->value);
 
-	if (obj->type() == ERROR_OBJ &&
+	if (obj->type() != ERROR_OBJ &&
 		builtin.find(ident->value) != builtin.end())
 		return builtin[ident->value];
 
@@ -365,14 +369,14 @@ Object *Evaluator::evalIdentifier(Identifier *ident, Environment *env)
 Object *Evaluator::evalCallExpression(Object *fn, std::vector<Object *> &args)
 {
 	if (fn->type() != FUNCTION_OBJ && fn->type() != BUILTIN_OBJ)
-		return new Error("not a function: " + fn->type());
+		return new Error("error: not a function -> " + fn->type());
 
 	if (fn->type() == BUILTIN_OBJ)
-      return ((Builtin *)fn)->function(args);
+		return ((Builtin *)fn)->function(args);
 
 	if (((Function *)fn)->parameters.size() != args.size())
 		return new Error(
-			"argument length(" + std::to_string(args.size()) +
+			"error: argument length (" + std::to_string(args.size()) +
 			") not equal to parameter length (" + std::to_string(((Function *)fn)->parameters.size()) + ")");
 
 	Environment *extendedEnv = extendFunctionEnv((Function *)fn, args, ((Function *)fn)->env);
@@ -407,7 +411,7 @@ Object *Evaluator::evalIndexExpression(Object *left, Object *index, Environment 
 		return evalHashMapIndexExpression((HashMap *)left, index);
 
 	else
-		return new Error("index operator not supported: " + left->type());
+		return new Error("error: index operator [] not supported for -> " + left->type());
 }
 
 Object *Evaluator::evalArrayIndexExpression(Array *array, Integer *index)
@@ -415,14 +419,10 @@ Object *Evaluator::evalArrayIndexExpression(Array *array, Integer *index)
 	int i = index->value;
 	auto arr = array->elements;
 
-	try
-	{
-		return arr[i];
-	}
-	catch (const std::out_of_range e)
-	{
-		return new Error("index " + index->inspect() + " out of range");
-	}
+	if (arr.size() <= i)
+		return new Error("error: index " + index->inspect() + " out of range");
+
+	return arr[i];
 }
 
 Object *Evaluator::evalStringIndexExpression(String *string, Integer *index)
@@ -430,14 +430,10 @@ Object *Evaluator::evalStringIndexExpression(String *string, Integer *index)
 	int i = index->value;
 	auto arr = string->value;
 
-	try
-	{
-		return new String(std::string(1, arr[i]));
-	}
-	catch (const std::out_of_range e)
-	{
-		return new Error("index " + index->inspect() + " out of range");
-	}
+	if (arr.size() <= i)
+		return new Error("error: index " + index->inspect() + " out of range");
+
+	return new String(std::string(1, arr[i]));
 }
 
 Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environment *env)
@@ -450,9 +446,6 @@ Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environmen
 
 		if (isError(key))
 			return key;
-
-		// if (Hashable.find(key->type()) == Hashable.end())
-		// 	return new Error("unusable as hash key : " + key->type());
 
 		Object *value = Eval(pair.value, env);
 
@@ -470,15 +463,12 @@ Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environmen
 
 Object *Evaluator::evalHashMapIndexExpression(HashMap *hashMap, Object *index)
 {
-	// if (Hashable.find(index) == Hashable.end())
-	// 	return new Error("unusable as hash key : ", index->type());
-
 	HashKey hashKey(index->type(), index->inspect());
 
 	if (hashMap->pairs.find(hashKey) != hashMap->pairs.end())
 		return hashMap->pairs[hashKey].value;
 
-	return __NULL;
+	return new Error("error: key not present -> " + index->inspect());
 }
 
 Object *Evaluator::evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environment *env)

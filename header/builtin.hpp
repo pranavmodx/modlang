@@ -14,7 +14,8 @@ Object *Print(std::vector<Object *> &objs)
 		std::cout << obj->inspect() << " ";
 	}
 
-	std::cout << std::endl;
+	if (!objs.empty())
+		std::cout << std::endl;
 
 	return __NULL;
 }
@@ -22,23 +23,27 @@ Object *Print(std::vector<Object *> &objs)
 Object *Len(std::vector<Object *> &objs)
 {
 	if (objs.size() == 0)
-		return __NULL;
+		return new Error("error: argument length (0) less than min (1)")
 
 	Object *obj = objs[0];
 	ObjectType type = obj->type();
 
-	if (type == ERROR_OBJ)
-		return obj;
-
-	else if (type == STRING_OBJ)
+	if (type == STRING_OBJ)
 		return new Integer(((String *)obj)->value.size());
 
 	else if (type == ARRAY_OBJ)
 		return new Integer(((Array *)obj)->elements.size());
 
-	std::cout << std::endl;
+	else if (type == HASHMAP_OBJ)
+		return new Integer(((HashMap *)obj)->pairs.size());
 
-	return __NULL;
+	else if (type == HASHSET_OBJ)
+		return new Integer(((HashSet *)obj)->pairs.size());
+
+	if (!objs.empty())
+		std::cout << std::endl;
+
+	return new Error("error: invalid argument");
 }
 
 Object *Push(std::vector<Object *> &objs)
@@ -57,6 +62,9 @@ Object *Push(std::vector<Object *> &objs)
 
 	else if (type == ARRAY_OBJ)
 		((Array *)obj)->elements.push_back(((Integer *)objs[1]));
+
+	if (!objs.empty())
+		std::cout << std::endl;
 
 	return __NULL;
 }
@@ -78,6 +86,9 @@ Object *Pop(std::vector<Object *> &objs)
 	else if (type == ARRAY_OBJ)
 		((Array *)obj)->elements.pop_back();
 
+	if (!objs.empty())
+		std::cout << std::endl;
+
 	return __NULL;
 }
 
@@ -97,6 +108,9 @@ Object *Insert(std::vector<Object *> &objs)
 		((HashSet *)obj)->pairs.insert({hashKey, objs[1]});
 	}
 
+	if (!objs.empty())
+		std::cout << std::endl;
+
 	return __NULL;
 }
 
@@ -115,6 +129,9 @@ Object *Remove(std::vector<Object *> &objs)
 		HashKey hashKey (objs[1]->type(), objs[1]->inspect());
 		((HashSet *)obj)->pairs.erase(hashKey);
 	}
+
+	if (!objs.empty())
+		std::cout << std::endl;
 
 	return __NULL;
 }

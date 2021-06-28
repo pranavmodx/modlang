@@ -3,6 +3,7 @@
 Environment *Environment::New()
 {
 	Environment *env = new Environment();
+	env->outer = nullptr;
 	return env;
 }
 
@@ -24,8 +25,9 @@ Object *Environment::Get(std::string name)
 			return obj;
 		}
 
-		return new Error("identifier not found: " + name);
+		return new Error("error : identifier not found -> " + name);
 	}
+
 	return store[name];
 }
 
