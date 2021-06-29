@@ -164,8 +164,25 @@ Object *Remove(std::vector<Object *> &objs)
 	return __NULL;
 }
 
+Object *Type(std::vector<Object *> &objs)
+{
+	if (objs.size() != 1)
+		return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (1)");
+
+	Object *obj = objs[0];
+	ObjectType type = obj->type();
+
+	if (type == ERROR_OBJ)
+		return obj;
+
+	std::cout << type << std::endl;
+
+	return __NULL;
+}
+
 std::unordered_map<std::string, Builtin *> builtin{
 	{"print", new Builtin(Print)},
+	{"type", new Builtin(Type)},
 	{"len", new Builtin(Len)},
 	{"push", new Builtin(Push)},
 	{"pop", new Builtin(Pop)},
