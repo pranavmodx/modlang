@@ -2,6 +2,9 @@
 
 #include <functional>
 #include <unordered_set>
+#include <stack>
+#include <queue>
+#include <deque>
 
 #include "ast.hpp"
 
@@ -10,13 +13,16 @@ typedef std::string ObjectType;
 const ObjectType INTEGER_OBJ = "INTEGER";
 const ObjectType BOOLEAN_OBJ = "BOOLEAN";
 const ObjectType STRING_OBJ = "STRING";
-const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
-const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType FUNCTION_OBJ = "FUNCTION";
 const ObjectType ARRAY_OBJ = "ARRAY";
 const ObjectType HASHMAP_OBJ = "HASHMAP";
 const ObjectType HASHSET_OBJ = "HASHSET";
+const ObjectType STACK_OBJ = "STACK";
+const ObjectType QUEUE_OBJ = "QUEUE";
+const ObjectType DEQUE_OBJ = "DEQUE";
 
+const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
+const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType NULL_OBJ = "NULL";
 const ObjectType ERROR_OBJ = "ERROR";
 
@@ -137,8 +143,11 @@ public:
 		for (auto ident : parameters)
 			res += ident->getStringRepr() + ", ";
 
-		res.pop_back();
-		res.pop_back();
+		if (parameters.size() != 0)
+		{
+			res.pop_back();
+			res.pop_back();
+		}
 
 		res += ")" + std::string("{\n") + body->getStringRepr() + std::string("\n}");
 
@@ -162,7 +171,7 @@ public:
 		for (auto elem : elements)
 			res += elem->inspect() + ", ";
 
-		if (res.size() != 1)
+		if (elements.size() != 0)
 		{
 			res.pop_back();
 			res.pop_back();
@@ -207,7 +216,7 @@ public:
 		for (auto pair : pairs)
 			res += pair.second.key->inspect() + " : " + pair.second.value->inspect() + ", ";
 
-		if (res.length() != 1)
+		if (pairs.size() != 0)
 		{
 			res.pop_back();
 			res.pop_back();
@@ -222,24 +231,78 @@ public:
 class HashSet : public Object
 {
 public:
-	std::unordered_map<HashKey, Object*, HashFn> pairs;
+	std::unordered_map<HashKey, Object *, HashFn> pairs;
 
 	ObjectType type() { return HASHSET_OBJ; }
 
 	std::string inspect()
 	{
-		std::string res = "{";
+		std::string res = "hashset<> {";
 
 		for (auto pair : pairs)
 			res += pair.second->inspect() + ", ";
 
-		if (res.length() != 1)
+		if (pairs.size() != 0)
 		{
 			res.pop_back();
 			res.pop_back();
 		}
 
 		res.push_back('}');
+
+		return res;
+	}
+};
+
+class Stack : public Object
+{
+public:
+	std::stack<Object *> elements;
+
+	ObjectType type() { return STACK_OBJ; }
+
+	std::string inspect()
+	{
+		if (elements.empty())
+			return "stack<> {top: empty}";
+
+		std::string res = "stack<> {top: " + elements.top()->inspect() + "}";
+
+		return res;
+	}
+};
+
+class Queue : public Object
+{
+public:
+	std::queue<Object *> elements;
+
+	ObjectType type() { return QUEUE_OBJ; }
+
+	std::string inspect()
+	{
+		if (elements.empty())
+			return "queue<> {front: empty}";
+
+		std::string res = "queue<> {front: " + elements.front()->inspect() + "}";
+
+		return res;
+	}
+};
+
+class Deque : public Object
+{
+public:
+	std::deque<Object *> elements;
+
+	ObjectType type() { return DEQUE_OBJ; }
+
+	std::string inspect()
+	{
+		if (elements.empty())
+			return "deque<> {front: empty, back: empty}";
+
+		std::string res = "deque<> {front: " + elements.front()->inspect() + ", back: " + elements.back()->inspect() + "}";
 
 		return res;
 	}

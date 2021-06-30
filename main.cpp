@@ -11,15 +11,16 @@ std::string readFile(const std::string &fileName)
 {
 	std::ifstream fin(fileName.c_str(), std::ios::binary | std::ios::ate);
 
-	int fileSize = fin.tellg();
-	if (fileSize == -1)
+	if (!fin) {
+		std::cerr << "error: could not open the file" << std::endl;
 		return "";
+	}
 
-	std::ifstream::pos_type finSize = fin.tellg();
+	std::ifstream::pos_type fileSize = fin.tellg();
 	fin.seekg(0, std::ios::beg);
 
-	std::vector<char> bytes(finSize);
-	fin.read(bytes.data(), finSize);
+	std::vector<char> bytes(fileSize);
+	fin.read(bytes.data(), fileSize);
 	fin.close();
 
 	return std::string(bytes.data(), fileSize);

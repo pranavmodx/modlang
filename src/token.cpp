@@ -10,6 +10,9 @@ std::unordered_map<std::string, TokenType> keywords = {
     {"def", FUNCTION},
     {"return", RETURN},
     {"hashset", HASHSET},
+    {"stack", STACK},
+    {"queue", QUEUE},
+    {"deque", DEQUE},
 };
 
 TokenType LookupIdentifier(std::string ident)

@@ -56,6 +56,9 @@ Object *Push(std::vector<Object *> &objs)
 	if (type == ERROR_OBJ)
 		return obj;
 
+	if (objs[1]->type() == ERROR_OBJ)
+		return objs[1];
+
 	else if (type == STRING_OBJ)
 		((String *)obj)->value += ((String *)objs[1])->value;
 
@@ -96,9 +99,6 @@ Object *Pop(std::vector<Object *> &objs)
 
 Object *Insert(std::vector<Object *> &objs)
 {
-	if (objs.size() != 2 || objs.size() != 3)
-		return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2 or 3)");
-
 	Object *obj = objs[0];
 	ObjectType type = obj->type();
 
@@ -110,6 +110,9 @@ Object *Insert(std::vector<Object *> &objs)
 		if (objs.size() != 2)
 			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2)");
 
+		if (objs[1]->type() == ERROR_OBJ)
+			return objs[1];
+
 		HashKey hashKey(objs[1]->type(), objs[1]->inspect());
 		((HashSet *)obj)->pairs.insert({hashKey, objs[1]});
 	}
@@ -118,6 +121,12 @@ Object *Insert(std::vector<Object *> &objs)
 	{
 		if (objs.size() != 3)
 			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2)");
+
+		if (objs[1]->type() == ERROR_OBJ)
+			return objs[1];
+
+		if (objs[2]->type() == ERROR_OBJ)
+			return objs[2];
 
 		HashKey hashKey(objs[1]->type(), objs[1]->inspect());
 		HashMapPairObj hashMapPairObj(objs[1], objs[2]);
@@ -144,6 +153,9 @@ Object *Remove(std::vector<Object *> &objs)
 		if (((HashSet *)obj)->pairs.empty())
 			return new Error("error: cannot remove from empty hashset");
 
+		if (objs[1]->type() == ERROR_OBJ)
+			return objs[1];
+
 		HashKey hashKey(objs[1]->type(), objs[1]->inspect());
 		if (((HashSet *)obj)->pairs.find(hashKey) == ((HashSet *)obj)->pairs.end())
 			return new Error("error: key not found in hashset -> " + objs[1]->inspect());
@@ -155,10 +167,47 @@ Object *Remove(std::vector<Object *> &objs)
 		if (((HashMap *)obj)->pairs.empty())
 			return new Error("error: cannot remove from empty hashmap");
 
+		if (objs[1]->type() == ERROR_OBJ)
+			return objs[1];
+
 		HashKey hashKey(objs[1]->type(), objs[1]->inspect());
 		if (((HashMap *)obj)->pairs.find(hashKey) == ((HashMap *)obj)->pairs.end())
 			return new Error("error: key not found in hashmap -> " + objs[1]->inspect());
 		((HashMap *)objs[0])->pairs.erase(hashKey);
+	}
+
+	return __NULL;
+}
+
+Object *Find(std::vector<Object *> &objs)
+{
+	if (objs.size() != 2)
+		return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2)");
+
+	Object *obj = objs[0];
+	ObjectType type = obj->type();
+
+	if (type == ERROR_OBJ)
+		return obj;
+
+	if (objs[1]->type() == ERROR_OBJ)
+		return objs[1];
+
+	// todo
+	if (type == STRING_OBJ) {
+
+	}
+
+	else if (type == ARRAY_OBJ) {
+
+	}
+
+	else if (type == HASHMAP_OBJ) {
+
+	}
+
+	else if (type == HASHSET_OBJ) {
+
 	}
 
 	return __NULL;
@@ -188,4 +237,5 @@ std::unordered_map<std::string, Builtin *> builtin{
 	{"pop", new Builtin(Pop)},
 	{"insert", new Builtin(Insert)},
 	{"remove", new Builtin(Remove)},
+	{"find", new Builtin(Find)},
 };

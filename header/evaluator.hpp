@@ -29,6 +29,9 @@ private:
 
 	Object *evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environment *env);
 	Object *evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environment *env);
+	Object *evalStackLiteral(StackLiteral *stackLiteral, Environment *env);
+	Object *evalQueueLiteral(QueueLiteral *queueLiteral, Environment *env);
+	Object *evalDequeLiteral(DequeLiteral *dequeLiteral, Environment *env);
 
 	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 

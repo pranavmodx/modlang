@@ -301,3 +301,42 @@ public:
 	std::string getStringRepr();
 	std::string nodeType() { return "HashSetLiteral"; }
 };
+
+class StackLiteral : public Expression
+{
+public:
+	Token token;
+	std::vector<Expression *> elements;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "StackLiteral"; }
+};
+
+class QueueLiteral : public Expression
+{
+public:
+	Token token;
+	std::vector<Expression *> elements;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "QueueLiteral"; }
+};
+
+class DequeLiteral : public Expression
+{
+public:
+	Token token;
+	std::vector<Expression *> elements;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "DequeLiteral"; }
+};

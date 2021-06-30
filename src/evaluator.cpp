@@ -193,6 +193,15 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "HashSetLiteral")
 		return evalHashSetLiteral((HashSetLiteral *)node, env);
 
+	else if (nodeType == "StackLiteral")
+		return evalStackLiteral((StackLiteral *)node, env);
+
+	else if (nodeType == "QueueLiteral")
+		return evalQueueLiteral((QueueLiteral *)node, env);
+
+	else if (nodeType == "DequeLiteral")
+		return evalDequeLiteral((DequeLiteral *)node, env);
+
 	return __NULL;
 }
 
@@ -467,7 +476,10 @@ Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environmen
 		Object *value = Eval(pair.value, env);
 
 		if (isError(value))
+		{
+			delete hashMap;
 			return value;
+		}
 
 		HashKey hashKey(key->type(), key->inspect());
 		HashMapPairObj hashMapPairObj(key, value);
@@ -497,11 +509,74 @@ Object *Evaluator::evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environmen
 		Object *key = Eval(pair, env);
 
 		if (isError(key))
+		{
+			delete hashSet;
 			return key;
+		}
 
 		HashKey hashKey(key->type(), key->inspect());
 		hashSet->pairs[hashKey] = key;
 	}
 
 	return hashSet;
+}
+
+Object *Evaluator::evalStackLiteral(StackLiteral *stackLiteral, Environment *env)
+{
+	Stack *stack = new Stack();
+
+	for (auto elem : stackLiteral->elements)
+	{
+		Object *obj = Eval(elem, env);
+
+		if (isError(obj))
+		{
+			delete stack;
+			return obj;
+		}
+
+		stack->elements.push(obj);
+	}
+
+	return stack;
+}
+
+Object *Evaluator::evalQueueLiteral(QueueLiteral *queueLiteral, Environment *env)
+{
+	Queue *queue = new Queue();
+
+	for (auto elem : queueLiteral->elements)
+	{
+		Object *obj = Eval(elem, env);
+
+		if (isError(obj))
+		{
+			delete queue;
+			return obj;
+		}
+
+		queue->elements.push(obj);
+	}
+
+	return queue;
+}
+
+Object *Evaluator::evalDequeLiteral(DequeLiteral *queueLiteral, Environment *env)
+{
+	Deque *deque = new Deque();
+
+	for (auto elem : queueLiteral->elements)
+	{
+		Object *obj = Eval(elem, env);
+
+		if (isError(obj))
+		{
+			delete deque;
+			return obj;
+		}
+
+		deque->elements.push_back(obj);
+	}
+
+	return deque;
 }

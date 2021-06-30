@@ -66,6 +66,9 @@ const TokenType WHILE = "WHILE";
 const TokenType FUNCTION = "FUNCTION";
 const TokenType RETURN = "RETURN";
 const TokenType HASHSET = "HASHSET";
+const TokenType STACK = "STACK";
+const TokenType QUEUE = "QUEUE";
+const TokenType DEQUE = "DEQUE";
 
 extern std::unordered_map<std::string, TokenType> keywords;
 

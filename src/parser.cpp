@@ -42,9 +42,12 @@ void Parser::New(Lexer &lexer)
 	prefixParseFns[STRING] = &Parser::parseStringLiteral;
 
 	prefixParseFns[IF] = &Parser::parseIfExpression;
-	prefixParseFns[WHILE]  = &Parser::parseWhileExpression;
+	prefixParseFns[WHILE] = &Parser::parseWhileExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
 	prefixParseFns[HASHSET] = &Parser::parseHashSetLiteral;
+	prefixParseFns[STACK] = &Parser::parseStackLiteral;
+	prefixParseFns[QUEUE] = &Parser::parseQueueLiteral;
+	prefixParseFns[DEQUE] = &Parser::parseDequeLiteral;
 
 	// brackets
 	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
@@ -119,8 +122,10 @@ LetStatement *Parser::parseLetStatement()
 	LetStatement *stmt = new LetStatement();
 	stmt->token = curToken;
 
-	if (!expectPeek(IDENT))
+	if (!expectPeek(IDENT)) {
+		delete stmt;
 		return nullptr;
+	}
 
 	stmt->name.token = curToken;
 	stmt->name.value = curToken.literal;
@@ -154,7 +159,7 @@ bool Parser::expectPeek(const TokenType &tokenType)
 
 void Parser::noPrefixParseFnError(TokenType type)
 {
-	errors.push_back("error: invalid symbol used in statement : " + type);
+	errors.push_back("error: invalid symbol used in statement -> " + type);
 }
 
 std::vector<std::string> Parser::Errors()
@@ -372,8 +377,10 @@ Expression *Parser::parseWhileExpression()
 	WhileExpression *exp = new WhileExpression();
 	exp->token = curToken;
 
-	if (!expectPeek(LPAREN))
+	if (!expectPeek(LPAREN)) {
+		delete exp;
 		return nullptr;
+	}
 
 	nextToken();
 
@@ -478,6 +485,7 @@ Expression *Parser::parseCallExpression(Expression *function)
 	}
 
 	exp->arguments = parseExpressionList();
+
 	if (!expectPeek(RPAREN))
 		exp->arguments = std::vector<Expression *>();
 
@@ -514,9 +522,10 @@ Expression *Parser::parseArrayLiteral()
 
 	exp->elements = parseExpressionList();
 
-	if (!expectPeek(RBRACKET))
-		//exp->elements = std::vector<Expression *>();
+	if (!expectPeek(RBRACKET)) {
+		delete exp;
 		return nullptr;
+	}
 
 	return exp;
 }
@@ -531,8 +540,10 @@ Expression *Parser::parseIndexExpression(Expression *array)
 
 	exp->index = parseExpression(LOWEST);
 
-	if (!expectPeek(RBRACKET))
+	if (!expectPeek(RBRACKET)) {
+		delete exp;
 		return nullptr;
+	}
 
 	return exp;
 }
@@ -548,8 +559,10 @@ Expression *Parser::parseHashMapLiteral()
 
 		Expression *key = parseExpression(LOWEST);
 
-		if (!expectPeek(COLON))
+		if (!expectPeek(COLON)) {
+			delete exp;
 			return nullptr;
+		}
 
 		nextToken();
 
@@ -562,7 +575,6 @@ Expression *Parser::parseHashMapLiteral()
 	}
 
 	if (!expectPeek(RBRACE))
-		// exp->pairs = std::vector<std::pair<Expression*, Expression*>();
 		return nullptr;
 
 	return exp;
@@ -573,14 +585,20 @@ Expression *Parser::parseHashSetLiteral()
 	HashSetLiteral *exp = new HashSetLiteral();
 	exp->token = curToken;
 
-	if (!expectPeek(LT))
+	if (!expectPeek(LT)) {
+		delete exp;
 		return nullptr;
+	}
 
-	if (!expectPeek(GT))
+	if (!expectPeek(GT)) {
+		delete exp;
 		return nullptr;
+	}
 
-	if (!expectPeek(LBRACE))
+	if (!expectPeek(LBRACE)) {
+		delete exp;
 		return nullptr;
+	}
 
 	while (peekToken.type != RBRACE)
 	{
@@ -594,8 +612,128 @@ Expression *Parser::parseHashSetLiteral()
 			return nullptr;
 	}
 
+	if (!expectPeek(RBRACE)) {
+		delete exp;
+		return nullptr;
+	}
+
+	return exp;
+}
+
+Expression *Parser::parseStackLiteral()
+{
+	StackLiteral *exp = new StackLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(GT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(LBRACE)) {
+		delete exp;
+		return nullptr;
+	}
+
+	while (peekToken.type != RBRACE)
+	{
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		exp->elements.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE)) {
+		delete exp;
+		return nullptr;
+	}
+
+	return exp;
+}
+
+Expression *Parser::parseQueueLiteral()
+{
+	QueueLiteral *exp = new QueueLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(GT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(LBRACE)) {
+		delete exp;
+		return nullptr;
+	}
+
+	while (peekToken.type != RBRACE)
+	{
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		exp->elements.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
 	if (!expectPeek(RBRACE))
 		return nullptr;
+
+	return exp;
+}
+
+Expression *Parser::parseDequeLiteral()
+{
+	DequeLiteral *exp = new DequeLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(GT)) {
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(LBRACE)) {
+		delete exp;
+		return nullptr;
+	}
+
+	while (peekToken.type != RBRACE)
+	{
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		exp->elements.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE)) {
+		delete exp;
+		return nullptr;
+	}
 
 	return exp;
 }
