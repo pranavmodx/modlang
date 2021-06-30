@@ -83,6 +83,19 @@ public:
 	std::string nodeType() { return "LetStatement"; }
 };
 
+class AssignStatement : public Statement
+{
+public:
+	Token token; // token ASSIGN
+	Identifier name;
+	Expression *value;
+
+	void statementNode() {}
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "AssignStatement"; }
+};
+
 class ReturnStatement : public Statement
 {
 public:

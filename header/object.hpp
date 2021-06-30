@@ -24,7 +24,7 @@ const ObjectType DEQUE_OBJ = "DEQUE";
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
 const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType NULL_OBJ = "NULL";
-const ObjectType ERROR_OBJ = "ERROR";
+const ObjectType ERROR_OBJ = "ERROR_OBJ";
 
 class Object
 {
@@ -85,7 +85,7 @@ public:
 	std::string value;
 
 	Error(std::string s) : Object(), value(s) {}
-	ObjectType type() { return ERROR_OBJ + " "; } // some bug here, don't touch " "!
+	ObjectType type() { return ERROR_OBJ + " "; }
 	std::string inspect() { return value; }
 };
 

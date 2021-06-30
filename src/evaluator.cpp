@@ -1,13 +1,5 @@
-#include "../header/evaluator.hpp"
 #include "../header/builtins.hpp"
-
-bool isError(Object *obj)
-{
-	if (obj != nullptr)
-		return obj->type() == ERROR_OBJ;
-
-	return false;
-}
+#include "../header/evaluator.hpp"
 
 bool isTruthy(Object *condition)
 {
@@ -22,7 +14,7 @@ bool isTruthy(Object *condition)
 	else
 		return true;
 }
-
+#include <iostream>
 Object *Evaluator::Eval(Node *node, Environment *env)
 {
 	std::string nodeType = node->nodeType();
@@ -41,7 +33,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	{
 		Object *value = Eval(((ReturnStatement *)node)->returnValue, env);
 
-		if (isError(value))
+		if (value->type() == ERROR_OBJ)
 			return value;
 
 		ReturnValue *returnValue = new ReturnValue(value);
@@ -52,10 +44,25 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	{
 		Object *value = Eval(((LetStatement *)node)->value, env);
 
-		if (isError(value))
+		if (value->type() == ERROR_OBJ)
 			return value;
 
 		env->Set((((LetStatement *)node)->name).value, value);
+	}
+
+	else if (nodeType == "AssignStatement")
+	{
+		Object *value = Eval(((AssignStatement *)node)->value, env);
+
+		if (value->type() == ERROR_OBJ)
+			return value;
+
+		Object *obj = env->Get((((AssignStatement *)node)->name).value);
+
+		if (obj->type() == ERROR_OBJ)
+			return obj;
+
+		env->Set((((AssignStatement *)node)->name).value, value);
 	}
 
 	// Expressions
@@ -79,7 +86,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "PrefixExpression")
 	{
 		Object *right = Eval(((PrefixExpression *)node)->right, env);
-		if (isError(right))
+		if (right->type() == ERROR_OBJ)
 			return right;
 
 		return evalPrefixExpression(((PrefixExpression *)node)->operand, right);
@@ -88,11 +95,11 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	else if (nodeType == "InfixExpression")
 	{
 		Object *left = Eval(((InfixExpression *)node)->left, env);
-		if (isError(left))
+		if (left->type() == ERROR_OBJ)
 			return left;
 
 		Object *right = Eval(((InfixExpression *)node)->right, env);
-		if (isError(right))
+		if (right->type() == ERROR_OBJ)
 			return right;
 
 		return evalInfixExpression(((InfixExpression *)node)->operand, left, right);
@@ -107,7 +114,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		{
 			Object *condition = Eval(((WhileExpression *)node)->condition, env);
 
-			if (isError(condition))
+			if (condition->type() == ERROR_OBJ)
 				return condition;
 
 			if (!isTruthy(condition))
@@ -137,7 +144,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	{
 		Object *fn = Eval(((CallExpression *)node)->function, env);
 
-		if (isError(fn))
+		if (fn->type() == ERROR_OBJ)
 			return fn;
 
 		std::vector<Object *> args;
@@ -146,7 +153,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		{
 			Object *arg = Eval(argument, env);
 
-			if (isError(arg))
+			if (arg->type() == ERROR_OBJ)
 				return arg;
 
 			args.push_back(arg);
@@ -163,7 +170,7 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 		{
 			Object *elem = Eval(element, env);
 
-			if (isError(elem))
+			if (elem->type() == ERROR_OBJ)
 				return elem;
 
 			elems.push_back(elem);
@@ -176,12 +183,12 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 	{
 		Object *array = Eval(((IndexExpression *)node)->array, env);
 
-		if (isError(array))
+		if (array->type() == ERROR_OBJ)
 			return array;
 
 		Object *index = Eval(((IndexExpression *)node)->index, env);
 
-		if (isError(index))
+		if (index->type() == ERROR_OBJ)
 			return index;
 
 		return evalIndexExpression(array, index, env);
@@ -470,12 +477,12 @@ Object *Evaluator::evalHashMapLiteral(HashMapLiteral *hashMapLiteral, Environmen
 	{
 		Object *key = Eval(pair.key, env);
 
-		if (isError(key))
+		if (key->type() == ERROR_OBJ)
 			return key;
 
 		Object *value = Eval(pair.value, env);
 
-		if (isError(value))
+		if (value->type() == ERROR_OBJ)
 		{
 			delete hashMap;
 			return value;
@@ -508,7 +515,7 @@ Object *Evaluator::evalHashSetLiteral(HashSetLiteral *hashSetLiteral, Environmen
 	{
 		Object *key = Eval(pair, env);
 
-		if (isError(key))
+		if (key->type() == ERROR_OBJ)
 		{
 			delete hashSet;
 			return key;
@@ -529,7 +536,7 @@ Object *Evaluator::evalStackLiteral(StackLiteral *stackLiteral, Environment *env
 	{
 		Object *obj = Eval(elem, env);
 
-		if (isError(obj))
+		if (obj->type() == ERROR_OBJ)
 		{
 			delete stack;
 			return obj;
@@ -549,7 +556,7 @@ Object *Evaluator::evalQueueLiteral(QueueLiteral *queueLiteral, Environment *env
 	{
 		Object *obj = Eval(elem, env);
 
-		if (isError(obj))
+		if (obj->type() == ERROR_OBJ)
 		{
 			delete queue;
 			return obj;
@@ -569,7 +576,7 @@ Object *Evaluator::evalDequeLiteral(DequeLiteral *queueLiteral, Environment *env
 	{
 		Object *obj = Eval(elem, env);
 
-		if (isError(obj))
+		if (obj->type() == ERROR_OBJ)
 		{
 			delete deque;
 			return obj;

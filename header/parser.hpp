@@ -44,6 +44,7 @@ private:
 	Statement *parseStatement();
 
 	LetStatement *parseLetStatement();
+	AssignStatement *parseAssignStatement();
 	ReturnStatement *parseReturnStatement();
 	BlockStatement *parseBlockStatement();
 

@@ -42,7 +42,7 @@ Object *Len(std::vector<Object *> &objs)
 	else if (type == HASHSET_OBJ)
 		return new Integer(((HashSet *)obj)->pairs.size());
 
-	return new Error("error: invalid argument");
+	return new Error("error: unsupported object for len()");
 }
 
 Object *Push(std::vector<Object *> &objs)
@@ -65,7 +65,16 @@ Object *Push(std::vector<Object *> &objs)
 	else if (type == ARRAY_OBJ)
 		((Array *)obj)->elements.push_back(((Integer *)objs[1]));
 
-	return __NULL;
+	else if (type == STACK_OBJ)
+		((Stack *)obj)->elements.push(((Integer *)objs[1]));
+
+	else if (type == QUEUE_OBJ)
+		((Queue *)obj)->elements.push(((Integer *)objs[1]));
+
+	else if (type == DEQUE_OBJ)
+		((Deque *)obj)->elements.push_back(((Integer *)objs[1]));
+
+	return new Error("error: unsupported object for push()");
 }
 
 Object *Pop(std::vector<Object *> &objs)
@@ -89,12 +98,36 @@ Object *Pop(std::vector<Object *> &objs)
 	else if (type == ARRAY_OBJ)
 	{
 		if (((Array *)obj)->elements.empty())
-			return new Error("error: cannot pop from empty string");
+			return new Error("error: cannot pop from empty array");
 
 		((Array *)obj)->elements.pop_back();
 	}
 
-	return __NULL;
+	else if (type == STACK_OBJ)
+	{
+		if (((Stack *)obj)->elements.empty())
+			return new Error("error: cannot pop from empty stack");
+
+		((Stack *)obj)->elements.pop();
+	}
+
+	else if (type == QUEUE_OBJ)
+	{
+		if (((Queue *)obj)->elements.empty())
+			return new Error("error: cannot pop from empty queue");
+
+		((Queue *)obj)->elements.pop();
+	}
+
+	else if (type == DEQUE_OBJ)
+	{
+		if (((Deque *)obj)->elements.empty())
+			return new Error("error: cannot pop from empty deque");
+
+		((Deque *)obj)->elements.pop_back();
+	}
+
+	return new Error("error: unsupported object for pop()");
 }
 
 Object *Insert(std::vector<Object *> &objs)
@@ -108,7 +141,7 @@ Object *Insert(std::vector<Object *> &objs)
 	else if (type == HASHSET_OBJ)
 	{
 		if (objs.size() != 2)
-			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2)");
+			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2) for hashset");
 
 		if (objs[1]->type() == ERROR_OBJ)
 			return objs[1];
@@ -120,7 +153,7 @@ Object *Insert(std::vector<Object *> &objs)
 	else if (type == HASHMAP_OBJ)
 	{
 		if (objs.size() != 3)
-			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (2)");
+			return new Error("error: argument length (" + std::to_string(objs.size()) + ") not equal to parameter length (3) for hashmap");
 
 		if (objs[1]->type() == ERROR_OBJ)
 			return objs[1];
@@ -134,7 +167,7 @@ Object *Insert(std::vector<Object *> &objs)
 		((HashMap *)objs[0])->pairs.insert({hashKey, hashMapPairObj});
 	}
 
-	return __NULL;
+	return new Error("error: unsupported object for insert()");
 }
 
 Object *Remove(std::vector<Object *> &objs)
@@ -176,7 +209,7 @@ Object *Remove(std::vector<Object *> &objs)
 		((HashMap *)objs[0])->pairs.erase(hashKey);
 	}
 
-	return __NULL;
+	return new Error("error: unsupported object for remove()");
 }
 
 Object *Find(std::vector<Object *> &objs)

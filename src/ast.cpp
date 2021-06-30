@@ -29,6 +29,15 @@ std::string LetStatement::getStringRepr()
 	return res;
 }
 
+std::string AssignStatement::getStringRepr()
+{
+	std::string res = name.getStringRepr() + " = " + value->getStringRepr();
+
+	res.push_back(';');
+
+	return res;
+}
+
 std::string ReturnStatement::getStringRepr()
 {
 	std::string res = tokenLiteral() + " " + returnValue->getStringRepr();

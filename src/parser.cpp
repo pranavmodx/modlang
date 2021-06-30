@@ -109,8 +109,19 @@ Statement *Parser::parseStatement()
 	// switch takes only int or enum val, so used if
 	if (curTokenType == LET)
 		return parseLetStatement();
+
+	else if (curTokenType == IDENT) {
+		Statement *stmt = parseAssignStatement();
+		
+		if (stmt == nullptr)
+			return parseExpressionStatement();
+
+		return stmt;
+	}
+
 	else if (curTokenType == RETURN)
 		return parseReturnStatement();
+
 	else
 		return parseExpressionStatement();
 
@@ -126,6 +137,31 @@ LetStatement *Parser::parseLetStatement()
 		delete stmt;
 		return nullptr;
 	}
+
+	stmt->name.token = curToken;
+	stmt->name.value = curToken.literal;
+
+	if (!expectPeek(ASSIGN))
+		return nullptr;
+
+	nextToken();
+
+	stmt->value = parseExpression(LOWEST);
+
+	if (peekToken.type == SEMICOLON)
+		nextToken();
+
+	return stmt;
+}
+
+AssignStatement *Parser::parseAssignStatement()
+{
+	AssignStatement *stmt = new AssignStatement();
+	
+	if (peekToken.type != ASSIGN)
+		return nullptr;
+
+	stmt->token = Token(ASSIGN, "ASSIGN");
 
 	stmt->name.token = curToken;
 	stmt->name.value = curToken.literal;
