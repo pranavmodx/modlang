@@ -47,14 +47,16 @@ private:
 	AssignStatement *parseAssignStatement();
 	ReturnStatement *parseReturnStatement();
 	BlockStatement *parseBlockStatement();
+	ExpressionStatement *parseExpressionStatement();
 
 	std::vector<Identifier *> parseFunctionParameters();
 	std::vector<Expression *> parseExpressionList();
 
-	ExpressionStatement *parseExpressionStatement();
 	Expression *parseExpression(Precedence precedence);
+
 	Expression *parsePrefixExpression();
 	Expression *parseInfixExpression(Expression *);
+
 	Expression *parseGroupedExpression();
 	Expression *parseIfExpression();
 	Expression *parseWhileExpression();
@@ -62,19 +64,26 @@ private:
 	Expression *parseIndexExpression(Expression *array);
 
 	Expression *parseIdentifier();
+
 	Expression *parseIntegerLiteral();
 	Expression *parseBooleanLiteral();
 	Expression *parseStringLiteral();
+
 	Expression *parseFunctionLiteral();
+
 	Expression *parseArrayLiteral();
 	Expression *parseHashMapLiteral();
 	Expression *parseHashSetLiteral();
 	Expression *parseStackLiteral();
 	Expression *parseQueueLiteral();
 	Expression *parseDequeLiteral();
+	Expression *parseMaxHeapLiteral();
+	Expression *parseMinHeapLiteral();
 
 	bool expectPeek(const TokenType &tokenType);
 	void peekError(const TokenType &tokenType);
+	void peekTypeError();
+	void curTypeError(TokenType type);
 	void noPrefixParseFnError(TokenType type);
 
 public:

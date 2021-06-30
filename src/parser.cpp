@@ -31,7 +31,9 @@ void Parser::New(Lexer &lexer)
 
 	// prefix parse functions
 	prefixParseFns[IDENT] = &Parser::parseIdentifier; // address of method
+
 	prefixParseFns[INT] = &Parser::parseIntegerLiteral;
+	prefixParseFns[STRING] = &Parser::parseStringLiteral;
 
 	prefixParseFns[BANG] = &Parser::parsePrefixExpression;
 	prefixParseFns[MINUS] = &Parser::parsePrefixExpression;
@@ -39,15 +41,16 @@ void Parser::New(Lexer &lexer)
 	prefixParseFns[TRUE] = &Parser::parseBooleanLiteral;
 	prefixParseFns[FALSE] = &Parser::parseBooleanLiteral;
 
-	prefixParseFns[STRING] = &Parser::parseStringLiteral;
-
 	prefixParseFns[IF] = &Parser::parseIfExpression;
 	prefixParseFns[WHILE] = &Parser::parseWhileExpression;
 	prefixParseFns[FUNCTION] = &Parser::parseFunctionLiteral;
+
 	prefixParseFns[HASHSET] = &Parser::parseHashSetLiteral;
 	prefixParseFns[STACK] = &Parser::parseStackLiteral;
 	prefixParseFns[QUEUE] = &Parser::parseQueueLiteral;
 	prefixParseFns[DEQUE] = &Parser::parseDequeLiteral;
+	prefixParseFns[MAX_HEAP] = &Parser::parseMaxHeapLiteral;
+	prefixParseFns[MIN_HEAP] = &Parser::parseMinHeapLiteral;
 
 	// brackets
 	prefixParseFns[LPAREN] = &Parser::parseGroupedExpression;
@@ -110,9 +113,10 @@ Statement *Parser::parseStatement()
 	if (curTokenType == LET)
 		return parseLetStatement();
 
-	else if (curTokenType == IDENT) {
+	else if (curTokenType == IDENT)
+	{
 		Statement *stmt = parseAssignStatement();
-		
+
 		if (stmt == nullptr)
 			return parseExpressionStatement();
 
@@ -133,7 +137,8 @@ LetStatement *Parser::parseLetStatement()
 	LetStatement *stmt = new LetStatement();
 	stmt->token = curToken;
 
-	if (!expectPeek(IDENT)) {
+	if (!expectPeek(IDENT))
+	{
 		delete stmt;
 		return nullptr;
 	}
@@ -157,7 +162,7 @@ LetStatement *Parser::parseLetStatement()
 AssignStatement *Parser::parseAssignStatement()
 {
 	AssignStatement *stmt = new AssignStatement();
-	
+
 	if (peekToken.type != ASSIGN)
 		return nullptr;
 
@@ -211,6 +216,20 @@ void Parser::resetErrors()
 void Parser::peekError(const TokenType &tokenType)
 {
 	std::string msg = "error: expected token to be " + tokenType + " got " + peekToken.type + " instead";
+
+	errors.push_back(msg);
+}
+
+void Parser::peekTypeError()
+{
+	std::string msg = "error: expected token to be INT or STRING got " + peekToken.type + " instead";
+
+	errors.push_back(msg);
+}
+
+void Parser::curTypeError(TokenType type)
+{
+	std::string msg = "error: expected token to be " + type + " got " + curToken.type + " instead";
 
 	errors.push_back(msg);
 }
@@ -413,7 +432,8 @@ Expression *Parser::parseWhileExpression()
 	WhileExpression *exp = new WhileExpression();
 	exp->token = curToken;
 
-	if (!expectPeek(LPAREN)) {
+	if (!expectPeek(LPAREN))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -558,7 +578,8 @@ Expression *Parser::parseArrayLiteral()
 
 	exp->elements = parseExpressionList();
 
-	if (!expectPeek(RBRACKET)) {
+	if (!expectPeek(RBRACKET))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -576,7 +597,8 @@ Expression *Parser::parseIndexExpression(Expression *array)
 
 	exp->index = parseExpression(LOWEST);
 
-	if (!expectPeek(RBRACKET)) {
+	if (!expectPeek(RBRACKET))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -595,7 +617,8 @@ Expression *Parser::parseHashMapLiteral()
 
 		Expression *key = parseExpression(LOWEST);
 
-		if (!expectPeek(COLON)) {
+		if (!expectPeek(COLON))
+		{
 			delete exp;
 			return nullptr;
 		}
@@ -621,17 +644,20 @@ Expression *Parser::parseHashSetLiteral()
 	HashSetLiteral *exp = new HashSetLiteral();
 	exp->token = curToken;
 
-	if (!expectPeek(LT)) {
+	if (!expectPeek(LT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(GT)) {
+	if (!expectPeek(GT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(LBRACE)) {
+	if (!expectPeek(LBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -648,7 +674,8 @@ Expression *Parser::parseHashSetLiteral()
 			return nullptr;
 	}
 
-	if (!expectPeek(RBRACE)) {
+	if (!expectPeek(RBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -661,17 +688,20 @@ Expression *Parser::parseStackLiteral()
 	StackLiteral *exp = new StackLiteral();
 	exp->token = curToken;
 
-	if (!expectPeek(LT)) {
+	if (!expectPeek(LT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(GT)) {
+	if (!expectPeek(GT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(LBRACE)) {
+	if (!expectPeek(LBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -688,7 +718,8 @@ Expression *Parser::parseStackLiteral()
 			return nullptr;
 	}
 
-	if (!expectPeek(RBRACE)) {
+	if (!expectPeek(RBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -701,17 +732,20 @@ Expression *Parser::parseQueueLiteral()
 	QueueLiteral *exp = new QueueLiteral();
 	exp->token = curToken;
 
-	if (!expectPeek(LT)) {
+	if (!expectPeek(LT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(GT)) {
+	if (!expectPeek(GT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(LBRACE)) {
+	if (!expectPeek(LBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -739,17 +773,20 @@ Expression *Parser::parseDequeLiteral()
 	DequeLiteral *exp = new DequeLiteral();
 	exp->token = curToken;
 
-	if (!expectPeek(LT)) {
+	if (!expectPeek(LT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(GT)) {
+	if (!expectPeek(GT))
+	{
 		delete exp;
 		return nullptr;
 	}
 
-	if (!expectPeek(LBRACE)) {
+	if (!expectPeek(LBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}
@@ -766,7 +803,126 @@ Expression *Parser::parseDequeLiteral()
 			return nullptr;
 	}
 
-	if (!expectPeek(RBRACE)) {
+	if (!expectPeek(RBRACE))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	return exp;
+}
+
+Expression *Parser::parseMaxHeapLiteral()
+{
+	MaxHeapLiteral *exp = new MaxHeapLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	if (peekToken.type != INT && peekToken.type != STRING) {
+		delete exp;
+		peekTypeError();
+		return nullptr;
+	}
+
+	nextToken();
+
+	exp->type = curToken.type;
+
+	if (!expectPeek(GT))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(LBRACE))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	while (peekToken.type != RBRACE)
+	{
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		if (value->getTokenType() != exp->type) {
+			curTypeError(exp->type);
+			return nullptr;
+		}
+
+		exp->elements.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	return exp;
+}
+
+Expression *Parser::parseMinHeapLiteral()
+{
+	MinHeapLiteral *exp = new MinHeapLiteral();
+	exp->token = curToken;
+
+	if (!expectPeek(LT))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	if (peekToken.type != INT && peekToken.type != STRING) {
+		delete exp;
+		peekTypeError();
+		return nullptr;
+	}
+
+	nextToken();
+
+	exp->type = curToken.type;
+
+	if (!expectPeek(GT))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	if (!expectPeek(LBRACE))
+	{
+		delete exp;
+		return nullptr;
+	}
+
+	while (peekToken.type != RBRACE)
+	{
+		nextToken();
+
+		Expression *value = parseExpression(LOWEST);
+
+		if (value->getTokenType() != exp->type) {
+			curTypeError(exp->type);
+			return nullptr;
+		}
+
+		exp->elements.push_back(value);
+
+		if (peekToken.type != RBRACE && !expectPeek(COMMA))
+			return nullptr;
+	}
+
+	if (!expectPeek(RBRACE))
+	{
 		delete exp;
 		return nullptr;
 	}

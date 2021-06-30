@@ -48,6 +48,8 @@ public:
 	virtual std::string getStringRepr() = 0;
 	virtual std::string nodeType() = 0;
 
+	virtual TokenType getTokenType() { return ILLEGAL; };
+
 	virtual ~Expression() {}
 };
 
@@ -130,6 +132,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr() { return std::to_string(value); }
 	std::string nodeType() { return "IntegerLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class PrefixExpression : public Expression
@@ -352,4 +356,32 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "DequeLiteral"; }
+};
+
+class MaxHeapLiteral : public Expression
+{
+public:
+	Token token;
+	TokenType type;
+	std::vector<Expression *> elements;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "MaxHeapLiteral"; }
+};
+
+class MinHeapLiteral : public Expression
+{
+public:
+	Token token;
+	TokenType type;
+	std::vector<Expression *> elements;
+
+	void expressionNode() {}
+
+	std::string tokenLiteral() { return token.literal; }
+	std::string getStringRepr();
+	std::string nodeType() { return "MinHeapLiteral"; }
 };

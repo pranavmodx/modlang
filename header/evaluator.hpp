@@ -32,6 +32,8 @@ private:
 	Object *evalStackLiteral(StackLiteral *stackLiteral, Environment *env);
 	Object *evalQueueLiteral(QueueLiteral *queueLiteral, Environment *env);
 	Object *evalDequeLiteral(DequeLiteral *dequeLiteral, Environment *env);
+	Object *evalMaxHeapLiteral(MaxHeapLiteral *maxHeapLiteral, Environment *env);
+	Object *evalMinHeapLiteral(MinHeapLiteral *minHeapLiteral, Environment *env);
 
 	Environment *extendFunctionEnv(Function *fn, std::vector<Object *> &args, Environment *outer);
 

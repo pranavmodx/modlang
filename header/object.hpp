@@ -13,18 +13,22 @@ typedef std::string ObjectType;
 const ObjectType INTEGER_OBJ = "INTEGER";
 const ObjectType BOOLEAN_OBJ = "BOOLEAN";
 const ObjectType STRING_OBJ = "STRING";
+
 const ObjectType FUNCTION_OBJ = "FUNCTION";
+
 const ObjectType ARRAY_OBJ = "ARRAY";
 const ObjectType HASHMAP_OBJ = "HASHMAP";
 const ObjectType HASHSET_OBJ = "HASHSET";
 const ObjectType STACK_OBJ = "STACK";
 const ObjectType QUEUE_OBJ = "QUEUE";
 const ObjectType DEQUE_OBJ = "DEQUE";
+const ObjectType MAXHEAP_OBJ = "MAXHEAP";
+const ObjectType MINHEAP_OBJ = "MINHEAP";
 
 const ObjectType RETURN_VALUE_OBJ = "RETURN_VALUE";
 const ObjectType BUILTIN_OBJ = "BUILTIN";
 const ObjectType NULL_OBJ = "NULL";
-const ObjectType ERROR_OBJ = "ERROR_OBJ";
+const ObjectType ERROR_OBJ = "ERROR";
 
 class Object
 {
@@ -303,6 +307,74 @@ public:
 			return "deque<> {front: empty, back: empty}";
 
 		std::string res = "deque<> {front: " + elements.front()->inspect() + ", back: " + elements.back()->inspect() + "}";
+
+		return res;
+	}
+};
+
+struct MaxHeapCompareFn
+{
+	bool operator()(Object *obj1, Object *obj2)
+	{
+		if (obj1->type() == INTEGER_OBJ)
+			return ((Integer *)obj1)->value < ((Integer *)obj2)->value;
+		else if (obj1->type() == STRING_OBJ)
+			return ((String *)obj1)->value < ((String *)obj2)->value;
+		
+		return true;
+	}
+};
+
+class MaxHeap : public Object
+{
+public:
+	TokenType tokenType;
+	std::priority_queue<Object *, std::vector<Object *>, MaxHeapCompareFn> elements;
+
+	MaxHeap() {}
+	MaxHeap(TokenType tType) : tokenType{tType} {}
+
+	ObjectType type() { return MAXHEAP_OBJ; }
+
+	std::string inspect()
+	{
+		if (elements.empty())
+			return "max_heap <" + tokenType + "> {top: empty}";
+
+		std::string res = "max_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
+
+		return res;
+	}
+};
+
+struct MinHeapCompareFn
+{
+	bool operator()(Object *obj1, Object *obj2)
+	{
+		if (obj1->type() == INTEGER_OBJ)
+			return ((Integer *)obj1)->value > ((Integer *)obj2)->value;
+		else
+			return ((String *)obj1)->value > ((String *)obj2)->value;
+	}
+};
+
+class MinHeap : public Object
+{
+public:
+	TokenType tokenType;
+	std::priority_queue<Object *, std::vector<Object *>, MinHeapCompareFn> elements;
+
+	MinHeap() {}
+	MinHeap(TokenType tType) : tokenType{tType} {}
+
+	ObjectType type() { return MINHEAP_OBJ; }
+
+	std::string inspect()
+	{
+		if (elements.empty())
+			return "min_heap <" + tokenType + "> {top: empty}";
+
+		std::string res = "min_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
 
 		return res;
 	}

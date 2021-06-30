@@ -253,3 +253,39 @@ std::string DequeLiteral::getStringRepr()
 
 	return res;
 }
+
+std::string MaxHeapLiteral::getStringRepr()
+{
+	if (elements.empty())
+		return "max_heap <" + type + "> {}";
+
+	std::string res = "max_heap <" + type + "> {";
+
+	for (auto elem : elements)
+		res += elem->getStringRepr() + ", ";
+
+	res.pop_back();
+	res.pop_back();
+
+	res.push_back('}');
+
+	return res;
+}
+
+std::string MinHeapLiteral::getStringRepr()
+{
+	if (elements.empty())
+		return "min_heap <" + type + "> {}";
+
+	std::string res = "min_heap <" + type + "> {";
+
+	for (auto elem : elements)
+		res += elem->getStringRepr() + ", ";
+
+	res.pop_back();
+	res.pop_back();
+
+	res.push_back('}');
+
+	return res;
+}

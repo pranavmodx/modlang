@@ -69,6 +69,8 @@ const TokenType HASHSET = "HASHSET";
 const TokenType STACK = "STACK";
 const TokenType QUEUE = "QUEUE";
 const TokenType DEQUE = "DEQUE";
+const TokenType MAX_HEAP = "MAX_HEAP";
+const TokenType MIN_HEAP = "MIN_HEAP";
 
 extern std::unordered_map<std::string, TokenType> keywords;
 

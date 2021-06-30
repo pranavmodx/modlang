@@ -14,7 +14,7 @@ bool isTruthy(Object *condition)
 	else
 		return true;
 }
-#include <iostream>
+
 Object *Evaluator::Eval(Node *node, Environment *env)
 {
 	std::string nodeType = node->nodeType();
@@ -208,6 +208,12 @@ Object *Evaluator::Eval(Node *node, Environment *env)
 
 	else if (nodeType == "DequeLiteral")
 		return evalDequeLiteral((DequeLiteral *)node, env);
+
+	else if (nodeType == "MaxHeapLiteral")
+		return evalMaxHeapLiteral((MaxHeapLiteral *)node, env);
+
+	else if (nodeType == "MinHeapLiteral")
+		return evalMinHeapLiteral((MinHeapLiteral *)node, env);
 
 	return __NULL;
 }
@@ -586,4 +592,44 @@ Object *Evaluator::evalDequeLiteral(DequeLiteral *queueLiteral, Environment *env
 	}
 
 	return deque;
+}
+
+Object *Evaluator::evalMaxHeapLiteral(MaxHeapLiteral *maxHeapLiteral, Environment *env)
+{
+	MaxHeap *maxHeap = new MaxHeap(maxHeapLiteral->type);
+
+	for (auto elem : maxHeapLiteral->elements)
+	{
+		Object *obj = Eval(elem, env);
+
+		if (obj->type() == ERROR_OBJ)
+		{
+			delete maxHeap;
+			return obj;
+		}
+
+		maxHeap->elements.push(obj);
+	}
+
+	return maxHeap;
+}
+
+Object *Evaluator::evalMinHeapLiteral(MinHeapLiteral *minHeapLiteral, Environment *env)
+{
+	MinHeap *minHeap = new MinHeap(minHeapLiteral->type);
+
+	for (auto elem : minHeapLiteral->elements)
+	{
+		Object *obj = Eval(elem, env);
+
+		if (obj->type() == ERROR_OBJ)
+		{
+			delete minHeap;
+			return obj;
+		}
+
+		minHeap->elements.push(obj);
+	}
+
+	return minHeap;
 }
