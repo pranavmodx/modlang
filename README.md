@@ -15,9 +15,8 @@ Mod (or ModLang) is a minimal and toy programming language implemented in C++ an
 
 ## Documentation
 ### Table of Contents
-* [mod\-lang](#mod-lang)
-  * [Status](#status)
-  * [Mod Language](#mod-language)
+* [Status](#status)
+* [Mod Language](#mod-language)
 
 ## Status
 > Working on a bytecode Compiler with Virtual Machine to improve the speed of the language.
