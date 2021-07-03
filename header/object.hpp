@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 #include <unordered_set>
 #include <stack>
 #include <queue>
@@ -338,10 +339,12 @@ public:
 
 	std::string inspect()
 	{
-		if (elements.empty())
-			return "max_heap <" + tokenType + "> {top: empty}";
+		transform(tokenType.begin(), tokenType.end(), tokenType.begin(), ::tolower);
 
-		std::string res = "max_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
+		if (elements.empty())
+			return "max_heap <" + tokenType.substr(0, 3)  + "> {top: empty}";
+
+		std::string res = "max_heap <" + tokenType.substr(0, 3) + "> {top: " + elements.top()->inspect() + "}";
 
 		return res;
 	}
@@ -371,10 +374,12 @@ public:
 
 	std::string inspect()
 	{
+		transform(tokenType.begin(), tokenType.end(), tokenType.begin(), ::tolower);
+		
 		if (elements.empty())
-			return "min_heap <" + tokenType + "> {top: empty}";
+			return "min_heap <" + tokenType.substr(0, 3)  + "> {top: empty}";
 
-		std::string res = "min_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
+		std::string res = "min_heap <" + tokenType.substr(0, 3)  + "> {top: " + elements.top()->inspect() + "}";
 
 		return res;
 	}

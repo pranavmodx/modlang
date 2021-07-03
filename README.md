@@ -1,6 +1,5 @@
 # Mod Programming Language
-
-Mod (or ModLang) is a minimal and toy programming language implemented in C++ and Standard Template Library (STL) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
+Mod (or ModLang) is a minimal and toy programming language implemented in C++ and STL (Standard Template Library) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
 - Dynamically typed and interpreted. Good for small scale scripting.
@@ -16,10 +15,10 @@ Mod (or ModLang) is a minimal and toy programming language implemented in C++ an
 ## Documentation
 ### Table of Contents
 * [Status](#status)
-* [Mod Language](#mod-language)
+* [Mod Language](#modlang)
 
 ## Status
-> Working on a bytecode Compiler with Virtual Machine to improve the speed of the language.
+> Working on bytecode Compiler and Virtual Machine.
 
 ## Mod Language
 
@@ -30,8 +29,6 @@ print("Hello World");
 ```
 
 ### Data Types
-`null`, `bool`, `int`, `str`. 
-
 Type      | Syntax                                       
 --------- | -------------------
 null      | `null`                                      
@@ -40,29 +37,29 @@ int       | `0, 100, -1, ...`
 str       | `"foo", "bar", ...`                          
 
 ### Data Structures
-`array`, `hashmap`, `hashset`, `stack`, `queue`, `deque`, `min_heap`, `max_heap`.
+Type      | Syntax                        
+--------- | -----------------------------
+array     | `[<elems>]`                   
+hashmap   | `{<key> : <value>}`           
+hashset   | `hashset<> {<key>}`           
+stack     | `stack<> {<elems>}`           
+queue     | `queue<> {<elems>}`           
+deque     | `deque<> {<elems>}`           
+max_heap  | `max_heap<type> {<type_elems>}`
+min_heap  | `min_heap<type> {<type_elems>}`
 
-Type      | Syntax                                       
---------- | -------------------
-null      | `null`                                      
-bool      | `true, false`                                
-int       | `0, 100, -1, ...`                            
-str       | `"foo", "bar", ...`
-
-### Binary and unary operators
-
+### Binary and Unary Operators
 Operators      | Description
 -------------- | -----------
 `* / %`        | Multiplication, Division, Modulo
 `+ -`          | Addition, Subtraction
 `< <= > >=`    | Comparison
 `== !=`        | Equality
-`-`            | Unary minus
-`!`            | Logical not
-`[]`           | Subscript
+`-`            | Unary Minus
+`!`            | Logical Not
+`[]`           | Index
 
-Overloaded operators: 
-
+### Overloaded Operators
 Operator   | Types           | Action
 ---------- | --------------- | ------
 `+`        | `int + int`     | add ints
@@ -72,3 +69,36 @@ Operator   | Types           | Action
 `[]`       | `str[int]`      | fetch nth char of str (0-based)
 `[]`       | `array[int]`    | fetch nth element of array (0-based)
 `[]`       | `hashmap[str]`  | fetch value in hashmap by key str
+
+### Conditional Expressions
+Mod supports 'if' and 'else'.
+
+```
+if (condition/expression) {
+	body;
+}
+else {
+	other body;
+}
+```
+
+### Looping Expressions
+Mod supports 'while'.
+
+```
+while (condition/expression) {
+	body;
+}
+```
+
+### Variables and Assignments
+Mod uses 'let' keyword to define a variable. Declaration alone is not allowed.
+
+```
+let var_name = expression;
+```
+
+Once defined you can reassign the variable to any other value/expression.
+```
+var_name = other_expression;
+```
