@@ -2,8 +2,8 @@
 Mod (or ModLang) is a minimal and toy programming language implemented in C++ and STL (Standard Template Library) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
-- Dynamically typed and interpreted. Good for small scale scripting.
-- Easy short syntax resembling closely to that of C/C++, Python and JavaScript.
+- Dynamically typed.
+- Simple short syntax.
 - Integer, boolean, and string primitive data types.
 - Basic arithmetic for integer expressions.
 - If-else conditional statement and while loop statement.
