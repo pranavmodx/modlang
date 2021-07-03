@@ -70,6 +70,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr() { return value; }
 	std::string nodeType() { return "Identifier"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class LetStatement : public Statement
@@ -147,6 +149,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "PrefixExpression"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class InfixExpression : public Expression
@@ -161,6 +165,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "InfixExpression"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class BooleanLiteral : public Expression
@@ -173,6 +179,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr() { return value ? "true" : "false"; }
 	std::string nodeType() { return "BooleanLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class StringLiteral : public Expression
@@ -185,6 +193,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr() { return value; }
 	std::string nodeType() { return "StringLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class BlockStatement : public Statement
@@ -211,6 +221,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "IfExpression"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class WhileExpression : public Expression
@@ -224,7 +236,6 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "WhileExpression"; }
-
 };
 
 class FunctionLiteral : public Expression
@@ -238,6 +249,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "FunctionLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class CallExpression : public Expression
@@ -252,6 +265,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "CallExpression"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class ArrayLiteral : public Expression
@@ -271,6 +286,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "ArrayLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class IndexExpression : public Expression
@@ -285,6 +302,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "IndexExpression"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 struct HashMapPair
@@ -304,6 +323,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "HashMapLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class HashSetLiteral : public Expression
@@ -317,6 +338,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "HashSetLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class StackLiteral : public Expression
@@ -330,6 +353,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "StackLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class QueueLiteral : public Expression
@@ -343,6 +368,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "QueueLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class DequeLiteral : public Expression
@@ -356,6 +383,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "DequeLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class MaxHeapLiteral : public Expression
@@ -370,6 +399,8 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "MaxHeapLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
 
 class MinHeapLiteral : public Expression
@@ -384,4 +415,6 @@ public:
 	std::string tokenLiteral() { return token.literal; }
 	std::string getStringRepr();
 	std::string nodeType() { return "MinHeapLiteral"; }
+
+	TokenType getTokenType() { return token.type; }
 };
