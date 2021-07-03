@@ -18,10 +18,10 @@ public:
 };
 
 const TokenType ILLEGAL = "ILLEGAL"; // unknown token
-const TokenType END = "END";		 // end of file
+const TokenType END = "END"; // end of file
 
-const TokenType IDENT = "IDENT";   // identifiers
-const TokenType INT = "INT";	   // int data type
+const TokenType IDENT = "IDENT"; // identifiers
+const TokenType INTEGER = "INTEGER"; // int data type
 const TokenType STRING = "STRING"; // string data type
 
 // operators

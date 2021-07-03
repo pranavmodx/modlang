@@ -32,7 +32,7 @@ void Parser::New(Lexer &lexer)
 	// prefix parse functions
 	prefixParseFns[IDENT] = &Parser::parseIdentifier; // address of method
 
-	prefixParseFns[INT] = &Parser::parseIntegerLiteral;
+	prefixParseFns[INTEGER] = &Parser::parseIntegerLiteral;
 	prefixParseFns[STRING] = &Parser::parseStringLiteral;
 
 	prefixParseFns[BANG] = &Parser::parsePrefixExpression;
@@ -222,7 +222,7 @@ void Parser::peekError(const TokenType &tokenType)
 
 void Parser::peekTypeError()
 {
-	std::string msg = "error: expected token to be INT or STRING got " + peekToken.type + " instead";
+	std::string msg = "error: expected token to be INTEGER or STRING got " + peekToken.type + " instead";
 
 	errors.push_back(msg);
 }
@@ -823,7 +823,7 @@ Expression *Parser::parseMaxHeapLiteral()
 		return nullptr;
 	}
 
-	if (peekToken.type != INT && peekToken.type != STRING) {
+	if (peekToken.type != INTEGER && peekToken.type != STRING) {
 		delete exp;
 		peekTypeError();
 		return nullptr;
@@ -882,7 +882,7 @@ Expression *Parser::parseMinHeapLiteral()
 		return nullptr;
 	}
 
-	if (peekToken.type != INT && peekToken.type != STRING) {
+	if (peekToken.type != INTEGER && peekToken.type != STRING) {
 		delete exp;
 		peekTypeError();
 		return nullptr;

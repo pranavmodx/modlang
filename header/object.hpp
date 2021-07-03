@@ -338,10 +338,13 @@ public:
 
 	std::string inspect()
 	{
-		if (elements.empty())
-			return "max_heap <" + tokenType + "> {top: empty}";
+		TokenType tType = tokenType.substr(0, 3);
+		transform(tType.begin(), tType.end(), tType.begin(), ::tolower);
 
-		std::string res = "max_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
+		if (elements.empty())
+			return "max_heap <" + tType + "> {top: empty}";
+
+		std::string res = "max_heap <" + tType + "> {top: " + elements.top()->inspect() + "}";
 
 		return res;
 	}
@@ -371,10 +374,13 @@ public:
 
 	std::string inspect()
 	{
-		if (elements.empty())
-			return "min_heap <" + tokenType + "> {top: empty}";
+		TokenType tType = tokenType.substr(0, 3);
+		transform(tType.begin(), tType.end(), tType.begin(), ::tolower);
 
-		std::string res = "min_heap <" + tokenType + "> {top: " + elements.top()->inspect() + "}";
+		if (elements.empty())
+			return "min_heap <" + tType + "> {top: empty}";
+
+		std::string res = "min_heap <" + tType + "> {top: " + elements.top()->inspect() + "}";
 
 		return res;
 	}

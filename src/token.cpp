@@ -4,7 +4,7 @@ std::unordered_map<std::string, TokenType> keywords = {
     {"true", TRUE},
     {"false", FALSE},
 
-    {"int", INT},
+    {"int", INTEGER},
     {"str", STRING},
 
     {"let", LET},

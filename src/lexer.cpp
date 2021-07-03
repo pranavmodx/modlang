@@ -167,7 +167,7 @@ Token Lexer::nextToken()
 		}
 		else if (isDigit(curChar))
 		{
-			token.type = INT;
+			token.type = INTEGER;
 			token.literal = readNumber();
 			return token;
 		}
