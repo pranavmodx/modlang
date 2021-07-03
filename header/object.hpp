@@ -339,7 +339,6 @@ public:
 
 	std::string inspect()
 	{
-<<<<<<< HEAD
 		TokenType tType = tokenType.substr(0, 3);
 		transform(tType.begin(), tType.end(), tType.begin(), ::tolower);
 
@@ -347,14 +346,6 @@ public:
 			return "max_heap <" + tType + "> {top: empty}";
 
 		std::string res = "max_heap <" + tType + "> {top: " + elements.top()->inspect() + "}";
-=======
-		transform(tokenType.begin(), tokenType.end(), tokenType.begin(), ::tolower);
-
-		if (elements.empty())
-			return "max_heap <" + tokenType.substr(0, 3)  + "> {top: empty}";
-
-		std::string res = "max_heap <" + tokenType.substr(0, 3) + "> {top: " + elements.top()->inspect() + "}";
->>>>>>> 6c31496105c2ca762b7254fa9e712d87b2b955b7
 
 		return res;
 	}
@@ -384,7 +375,6 @@ public:
 
 	std::string inspect()
 	{
-<<<<<<< HEAD
 		TokenType tType = tokenType.substr(0, 3);
 		transform(tType.begin(), tType.end(), tType.begin(), ::tolower);
 
@@ -392,14 +382,6 @@ public:
 			return "min_heap <" + tType + "> {top: empty}";
 
 		std::string res = "min_heap <" + tType + "> {top: " + elements.top()->inspect() + "}";
-=======
-		transform(tokenType.begin(), tokenType.end(), tokenType.begin(), ::tolower);
-		
-		if (elements.empty())
-			return "min_heap <" + tokenType.substr(0, 3)  + "> {top: empty}";
-
-		std::string res = "min_heap <" + tokenType.substr(0, 3)  + "> {top: " + elements.top()->inspect() + "}";
->>>>>>> 6c31496105c2ca762b7254fa9e712d87b2b955b7
 
 		return res;
 	}
