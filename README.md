@@ -1,4 +1,4 @@
-# Mod Programming Language
+# ![alt text](https://github.com/lijozech-12/modlang/blob/logo/resources/logofire_40px_png_trans.png)od Programming Language                     
 Mod (or ModLang) is a minimal, toy programming language implemented in C++ and STL (Standard Template Library) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
@@ -205,3 +205,9 @@ factorial(5); // 120
 
 - `find(container_object, object)`
 	Find an object in a container object. (Strings, Arrays, Hashmap and Hashset). Note: Arrays can find only primitive data types (Booleans, Integers, Strings)
+
+
+
+<p align="center">
+  <img width="100" src="https://github.com/lijozech-12/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Material Bread logo">
+</p>
