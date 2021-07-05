@@ -1,4 +1,4 @@
-# Mod Programming Language
+# Mod Programming Language ![alt text](https://github.com/lijozech-12/modlang/blob/logo/resources/logofire_80px_png.png)
 Mod (or ModLang) is a minimal, toy programming language implemented in C++ and STL (Standard Template Library) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
