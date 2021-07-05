@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire mod logo">
+  <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire Mod Logo">
 </p>
 
 # ![alt text](https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_40px_png_trans.png)od Programming Language                     
@@ -18,31 +18,47 @@ Mod (or ModLang) is a minimal, toy programming language implemented in C++ and S
 
 ## Documentation
 ### Table of Contents
-- [!alt textod Programming Language](#od-programming-language)
+- [Mod Programming Language](#mod-programming-language)
 	- [Features](#features)
-	- [Documentation](#documentation)
-		- [Table of Contents](#table-of-contents)
 	- [Status](#status)
-	- [Development](#development)
+	- [Usage](#usage)
 	- [Mod Language](#mod-language)
 		- [First Program](#first-program)
 		- [Data Types](#data-types)
 		- [Data Structures](#data-structures)
 		- [Binary and Unary Operators](#binary-and-unary-operators)
-		- [Overloaded Operators](#overloaded-operators)
+			- [Overloaded Operators](#overloaded-operators)
 		- [Control Statements](#control-statements)
-		- [Conditional Expressions](#conditional-expressions)
-		- [Looping Expressions](#looping-expressions)
+			- [Conditional Expressions](#conditional-expressions)
+			- [Looping Expressions](#looping-expressions)
 		- [Variables and Assignments](#variables-and-assignments)
 		- [Functions](#functions)
-		- [Closures](#closures)
-		- [Recursive Functions](#recursive-functions)](#recursive-functionsrecursive-functions)
-		- [Built-in Functions](#built-in-functions)
+			- [Closures](#closures)
+			- [Recursive Functions](#recursive-functions)
+			- [Built-in Functions](#built-in-functions)
+	- [References](#references)
+	- [Credits](#credits)
+	- [Contributing](#contributing)
+	- [Support](#support)
 
 ## Status
 > Working on bytecode Compiler and Virtual Machine.
 
-## Development
+## Usage
+```bash
+> make
+```
+or 
+```bash
+> g++ -std=c++11 main.cpp src/*.cpp -o mod --debug
+```
+
+```bash
+> ./mod examples/test.modx
+Hello world!
+```
+
+- Replace main.cpp with repl.cpp, rppl.cpp or rlpl.cpp for experimenting with interactive shell
 
 ## Mod Language
 
@@ -152,7 +168,7 @@ let tripleCall = def(x, func) {
 tripleCall(2, square); // 256
 ```
 
-### Recursive Functions](#recursive-functions)
+### Recursive Functions
 
 ```
 let gcd = def(x, y) { 
@@ -216,6 +232,20 @@ factorial(5); // 120
 	Find an object in a container object. (Strings, Arrays, Hashmap and Hashset). Note: Arrays can find only primitive data types (Booleans, Integers, Strings)
 
 
+# References
+1. [Writing an Interpreter in Go](https://interpreterbook.com/) - [Thorsten Ball](https://www.linkedin.com/in/thorsten-ball-3142b652/)
+2. [Crafting Interpreters](http://craftinginterpreters.com/) - [Bob Nystrom](https://www.linkedin.com/in/robert-nystrom-3124052/)
+
+# Credits
+Special thanks to [Lijo Zechariah](https://www.linkedin.com/in/lijo-zechariah-james-12091999/) for the logo
+
+# Contributing
+If you find any bug, please raise an issue or send a pull request if you have fixed it. Feel free to contribute in any way possible.
+
+# Support
+If you like Mod and would like to support it's development, consider donating:
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/pranavmodx)
 
 <p align="center">
   <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire mod logo">
