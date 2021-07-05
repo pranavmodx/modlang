@@ -243,9 +243,9 @@ Special thanks to [Lijo Zechariah](https://www.linkedin.com/in/lijo-zechariah-ja
 If you find any bug, please raise an issue or send a pull request if you have fixed it. Feel free to contribute in any way possible.
 
 # Support
-If you like Mod and would like to support it's development, consider donating:
+If you like Mod and would like to support it's development:
 
-[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/pranavmodx)
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-red.png)](https://www.buymeacoffee.com/pranavmodx)
 
 <p align="center">
   <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire mod logo">
