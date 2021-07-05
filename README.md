@@ -207,4 +207,7 @@ factorial(5); // 120
 	Find an object in a container object. (Strings, Arrays, Hashmap and Hashset). Note: Arrays can find only primitive data types (Booleans, Integers, Strings)
 
 
-	![alt text](https://github.com/lijozech-12/modlang/blob/logo/resources/logofire_80px_png_trans.png) 
+<p align="center">
+   ![alt text](https://github.com/lijozech-12/modlang/blob/logo/resources/logofire_80px_png_trans.png) 
+</p>
+	
