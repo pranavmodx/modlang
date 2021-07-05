@@ -1,4 +1,8 @@
-# Mod Programming Language
+<p align="center">
+  <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire mod logo">
+</p>
+
+# ![alt text](https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_40px_png_trans.png)od Programming Language                     
 Mod (or ModLang) is a minimal, toy programming language implemented in C++ and STL (Standard Template Library) without any other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
@@ -14,21 +18,26 @@ Mod (or ModLang) is a minimal, toy programming language implemented in C++ and S
 
 ## Documentation
 ### Table of Contents
-* [Status](#status)
-* [Development](#development)
-* [Mod Language](#modlang)
-	* [First Program](#first-program)
-	* [Data Types](#data-types)
-	* [Data Structures](#data-structures)
-	* [Binary and Unary Operators](#binary-and-unary-operators)
-		* [Overloaded Operators](#overloaded-operators)
-	* [Control Statements](#control-flow-statements)
-		* [Conditional Expressions](#conditional-expressions)
-		* [Looping Expressions](#looping-expressions)
-	* [Functions](#functions)
-		* [Closures](#closures)
-		* [Recursive Functions](#recursive-functions)
-		* [Built-in Functions](#builtin-functions)
+- [!alt textod Programming Language](#od-programming-language)
+	- [Features](#features)
+	- [Documentation](#documentation)
+		- [Table of Contents](#table-of-contents)
+	- [Status](#status)
+	- [Development](#development)
+	- [Mod Language](#mod-language)
+		- [First Program](#first-program)
+		- [Data Types](#data-types)
+		- [Data Structures](#data-structures)
+		- [Binary and Unary Operators](#binary-and-unary-operators)
+		- [Overloaded Operators](#overloaded-operators)
+		- [Control Statements](#control-statements)
+		- [Conditional Expressions](#conditional-expressions)
+		- [Looping Expressions](#looping-expressions)
+		- [Variables and Assignments](#variables-and-assignments)
+		- [Functions](#functions)
+		- [Closures](#closures)
+		- [Recursive Functions](#recursive-functions)](#recursive-functionsrecursive-functions)
+		- [Built-in Functions](#built-in-functions)
 
 ## Status
 > Working on bytecode Compiler and Virtual Machine.
@@ -205,3 +214,9 @@ factorial(5); // 120
 
 - `find(container_object, object)`
 	Find an object in a container object. (Strings, Arrays, Hashmap and Hashset). Note: Arrays can find only primitive data types (Booleans, Integers, Strings)
+
+
+
+<p align="center">
+  <img width="100" src="https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_80px_png_trans.png" alt="Fire mod logo">
+</p>
