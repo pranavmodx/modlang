@@ -4,7 +4,7 @@
 <p align="center"><img alt="C++" src="https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white"/></p>
 
 # ![alt text](https://github.com/pranavmodx/modlang/blob/logo/resources/logofire_40px_png_trans.png)od Programming Language                     
-Mod (or ModLang) is a minimal, toy programming language implemented in C++ and STL (Standard Template Library) with no other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C/C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
+Mod (or ModLang) is a minimal, toy programming language implemented in C++ and STL (Standard Template Library) with no other external dependencies. It is dynamically typed and it's syntax is majorly influenced by C++, Python and JavaScript. It is currently an interpreted language and supports imperative - procedural programming.
 
 ## Features
 - Dynamically typed.
