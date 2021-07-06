@@ -20,7 +20,6 @@ Mod (or ModLang) is a minimal, toy programming language implemented in C++ and S
 ## Documentation
 ### Table of Contents
 - [Mod Programming Language](#mod-programming-language)
-	- [Features](#features)
 	- [Status](#status)
 	- [Usage](#usage)
 	- [Mod Language](#mod-language)
@@ -29,10 +28,10 @@ Mod (or ModLang) is a minimal, toy programming language implemented in C++ and S
 		- [Data Structures](#data-structures)
 		- [Binary and Unary Operators](#binary-and-unary-operators)
 			- [Overloaded Operators](#overloaded-operators)
+		- [Variables and Assignments](#variables-and-assignments)
 		- [Control Statements](#control-statements)
 			- [Conditional Expressions](#conditional-expressions)
 			- [Looping Expressions](#looping-expressions)
-		- [Variables and Assignments](#variables-and-assignments)
 		- [Functions](#functions)
 			- [Closures](#closures)
 			- [Recursive Functions](#recursive-functions)
@@ -112,6 +111,18 @@ Operator   | Types           | Action
 `[]`       | `str[int]`      | fetch nth char of str (0-based)
 `[]`       | `array[int]`    | fetch nth element of array (0-based)
 `[]`       | `hashmap[str]`  | fetch value in hashmap by key str
+	
+### Variables and Assignments
+Mod uses 'let' keyword to define a variable. Declaration alone is not allowed.
+
+```
+let var_name = expression;
+```
+
+Once defined you can reassign the variable to any other value/expression.
+```
+var_name = other_expression;
+```
 
 ### Control Statements
 
@@ -134,18 +145,6 @@ Mod supports 'while'.
 while (condition/expression) {
 	body;
 }
-```
-
-### Variables and Assignments
-Mod uses 'let' keyword to define a variable. Declaration alone is not allowed.
-
-```
-let var_name = expression;
-```
-
-Once defined you can reassign the variable to any other value/expression.
-```
-var_name = other_expression;
 ```
 
 ### Functions
